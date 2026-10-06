@@ -1,0 +1,35 @@
+id = "pd_print_source"
+title = "A program that prints a program"
+language = "python"
+kind = "daily"
+level = 1
+order = 50
+rating = 670
+par_minutes = 25
+files = ["print_source.py"]
+new_skills = []
+skills = ["output"]
+
+[[require]]
+pattern = "\\\\"
+message = "Uses a backslash escape or a raw string"
+
+[[require]]
+pattern = "\\bprint\\s*\\("
+message = "Uses print()"
+
+[[forbid]]
+pattern = "\\b(import|open|input|exec|eval|chr|ord)\\b|__"
+message = "Only print is needed here"
+
+[[cases]]
+name = "prints the seven lines of greet.py"
+stdout = '''
+# greet.py
+name = "World"
+print("Hello, \"" + name + "\"!")
+print('It\'s here: C:\\new\\table')
+print("line one\nline two")
+print('say "cheese"')
+print("it's a backslash: \\")
+'''

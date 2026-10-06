@@ -1,0 +1,134 @@
+id = "pd_hms_clock"
+title = "Seconds on the clock"
+language = "python"
+kind = "daily"
+level = 2
+order = 50
+rating = 740
+par_minutes = 20
+files = ["hms_clock.py"]
+forbidden_calls = [
+    "divmod", "format", "__import__",
+    ".format", ".zfill", ".rjust", ".ljust", ".center", ".strftime",
+]
+forbidden_imports = ["time", "datetime"]
+new_skills = []
+skills = ["output", "variables"]
+
+[[require]]
+pattern = "//"
+message = "Uses whole-number division"
+
+[[require]]
+pattern = "%"
+message = "Uses the remainder"
+
+[[forbid]]
+pattern = "\\{[^{}'\"\\n]*:[^{}'\"\\n]*\\}|%0?\\d+d"
+message = "Build the two digits with // and %, not with a format spec"
+
+[[forbid]]
+pattern = "\\[[^\\]\\n]*:[^\\]\\n]*\\]"
+message = "Build the two digits with // and %, not by slicing text"
+
+[[cases]]
+name = "a little over an hour"
+stdin = "3725\n"
+stdout = "1:02:05\n"
+
+[[cases]]
+name = "a million seconds"
+stdin = "1000000\n"
+stdout = "277:46:40\n"
+
+[[cases]]
+name = "zero"
+stdin = "0\n"
+stdout = "0:00:00\n"
+
+[[cases]]
+name = "just under a minute"
+stdin = "59\n"
+stdout = "0:00:59\n"
+
+[[cases]]
+name = "exactly one hour"
+stdin = "3600\n"
+stdout = "1:00:00\n"
+
+[[cases]]
+name = "exactly one minute"
+stdin = "60\n"
+stdout = "0:01:00\n"
+hidden = true
+hint = "a whole number of minutes: the seconds field must be 00"
+
+[[cases]]
+name = "one second short of an hour"
+stdin = "3599\n"
+stdout = "0:59:59\n"
+hidden = true
+hint = "the last second before the hours go up"
+
+[[cases]]
+name = "one second short of a day"
+stdin = "86399\n"
+stdout = "23:59:59\n"
+hidden = true
+hint = "just before a whole day"
+
+[[cases]]
+name = "one day"
+stdin = "86400\n"
+stdout = "24:00:00\n"
+hidden = true
+hint = "hours keep counting past 23"
+
+[[cases]]
+name = "a hundred hours"
+stdin = "360000\n"
+stdout = "100:00:00\n"
+hidden = true
+hint = "hours with three digits"
+
+[[cases]]
+name = "one second short of a hundred hours"
+stdin = "359999\n"
+stdout = "99:59:59\n"
+hidden = true
+hint = "a carry deep into the hours"
+
+[[cases]]
+name = "the largest input"
+stdin = "99999999\n"
+stdout = "27777:46:39\n"
+hidden = true
+hint = "the largest input: hours with five digits"
+
+[[cases]]
+name = "a single second"
+stdin = "7\n"
+stdout = "0:00:07\n"
+hidden = true
+hint = "a one-digit field needs a leading zero"
+
+[[cases]]
+name = "ten minutes"
+stdin = "600\n"
+stdout = "0:10:00\n"
+hidden = true
+hint = "a two-digit field must not get an extra zero"
+
+[[cases]]
+name = "ten hours and ten seconds"
+stdin = "36010\n"
+stdout = "10:00:10\n"
+hidden = true
+hint = "two-digit hours and seconds stay as they are"
+
+[[cases]]
+name = "single digits everywhere"
+stdin = "3661\n"
+stdout = "1:01:01\n"
+hidden = true
+hint = "every field has a single digit"

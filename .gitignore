@@ -5,3 +5,7 @@ __pycache__/
 build/
 dist/
 .ruff_cache/
+
+# Authoring scratch: work-in-progress and swapped-out task folders
+.wip-*/
+.old-*/

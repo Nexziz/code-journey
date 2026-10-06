@@ -1,0 +1,161 @@
+id = "pd_caesar_three"
+title = "Caesar, wrapping around"
+language = "python"
+kind = "daily"
+level = 2
+order = 50
+rating = 710
+par_minutes = 20
+files = ["caesar_three.py"]
+forbidden_imports = ["string"]
+new_skills = []
+skills = ["output", "variables"]
+
+[[require]]
+pattern = "%"
+message = "Uses % to wrap around"
+
+[[require]]
+pattern = "\\bord\\s*\\("
+message = "Uses ord()"
+
+[[require]]
+pattern = "\\bchr\\s*\\("
+message = "Uses chr()"
+
+[[forbid]]
+pattern = "abcdefg|\\.index|\\.find|ascii_lowercase"
+message = "Do the arithmetic on letter numbers, do not look up an alphabet string"
+
+[[cases]]
+name = "a few steps"
+stdin = "a\nb\nc\n1\n"
+stdout = "bcd\n"
+
+[[cases]]
+name = "no shift"
+stdin = "h\ne\ny\n0\n"
+stdout = "hey\n"
+
+[[cases]]
+name = "wrap at the end"
+stdin = "x\ny\nz\n3\n"
+stdout = "abc\n"
+
+[[cases]]
+name = "negative shift wraps"
+stdin = "c\na\nt\n-3\n"
+stdout = "zxq\n"
+
+[[cases]]
+name = "one full turn"
+stdin = "j\na\nm\n26\n"
+stdout = "jam\n"
+hidden = true
+hint = "a shift of a whole number of alphabets"
+
+[[cases]]
+name = "one full turn back"
+stdin = "p\no\nt\n-26\n"
+stdout = "pot\n"
+hidden = true
+hint = "a negative shift of a whole alphabet"
+
+[[cases]]
+name = "two full turns"
+stdin = "s\nu\nn\n52\n"
+stdout = "sun\n"
+hidden = true
+hint = "a shift bigger than one whole alphabet"
+
+[[cases]]
+name = "one turn and one"
+stdin = "d\no\ng\n27\n"
+stdout = "eph\n"
+hidden = true
+hint = "a shift bigger than 26"
+
+[[cases]]
+name = "one turn back and one"
+stdin = "d\no\ng\n-27\n"
+stdout = "cnf\n"
+hidden = true
+hint = "a negative shift bigger than 26"
+
+[[cases]]
+name = "a huge shift"
+stdin = "z\ny\nx\n1000\n"
+stdout = "lkj\n"
+hidden = true
+hint = "a very large shift"
+
+[[cases]]
+name = "a huge negative shift"
+stdin = "a\nb\nc\n-1000\n"
+stdout = "opq\n"
+hidden = true
+hint = "a very large negative shift"
+
+[[cases]]
+name = "the same letter"
+stdin = "m\nm\nm\n5\n"
+stdout = "rrr\n"
+hidden = true
+hint = "the same letter three times"
+
+[[cases]]
+name = "z goes forward"
+stdin = "z\nz\nz\n1\n"
+stdout = "aaa\n"
+hidden = true
+hint = "passing the end of the alphabet"
+
+[[cases]]
+name = "a goes back"
+stdin = "a\na\na\n-1\n"
+stdout = "zzz\n"
+hidden = true
+hint = "going back past the start of the alphabet"
+
+[[cases]]
+name = "mixed ends"
+stdin = "z\na\nm\n1\n"
+stdout = "abn\n"
+hidden = true
+hint = "letters from different parts of the alphabet"
+
+[[cases]]
+name = "ends without a shift"
+stdin = "z\na\nz\n0\n"
+stdout = "zaz\n"
+hidden = true
+hint = "no shift at all, even at the ends"
+
+[[cases]]
+name = "almost a full turn"
+stdin = "a\nm\nz\n25\n"
+stdout = "zly\n"
+hidden = true
+hint = "a shift just under a whole alphabet"
+
+[[cases]]
+name = "step back"
+stdin = "a\nb\nc\n-1\n"
+stdout = "zab\n"
+hidden = true
+hint = "stepping back from the first letters"
+
+[[cases]]
+name = "not in order"
+stdin = "q\nb\nt\n-7\n"
+stdout = "jum\n"
+hidden = true
+hint = "the letters must keep the input order"
+
+[[cases]]
+name = "a big odd shift"
+stdin = "f\no\nx\n777\n"
+stdout = "clu\n"
+hidden = true
+hint = "a large shift that is not a whole number of alphabets"
+

@@ -1,0 +1,8 @@
+print("# greet.py")
+print('name = "World"')
+print('print("Hello, \\"" + name + "\\"!")')
+print("print('It\\'s here: C:\\\\new\\\\table')")
+print('print("line one\\nline two")')
+print("print('say \"cheese\"')")
+print('print("it\'s a backslash: \\\\")')
+print()

@@ -1,0 +1,199 @@
+id = "pd_letter_diamond"
+title = "Letter diamond"
+language = "python"
+kind = "daily"
+level = 3
+order = 50
+rating = 750
+par_minutes = 25
+files = ["diamond.py"]
+forbidden_calls = [".center", ".ljust", ".rjust"]
+forbidden_imports = ["string"]
+new_skills = []
+skills = ["output", "variables", "loops"]
+
+[[require]]
+pattern = "\\b(for|while)\\b[\\s\\S]*\\b(for|while)\\b"
+message = "Uses two loops"
+
+[[require]]
+pattern = "\\bchr\\s*\\("
+message = "Builds the letters with chr"
+
+[[forbid]]
+pattern = "abcd|ABCD|wxyz|WXYZ|ascii_lowercase|ascii_letters"
+message = "Does not type the alphabet by hand"
+
+[[forbid]]
+pattern = "\\{[^{}]*:[^{}]*[<>^]"
+message = "Does not centre with f-string alignment"
+
+[[cases]]
+name = "three letters"
+stdin = "3\n"
+stdout = '''
+  a
+ bbb
+ccccc
+ bbb
+  a
+'''
+
+[[cases]]
+name = "one letter"
+stdin = "1\n"
+stdout = '''
+a
+'''
+
+[[cases]]
+name = "two letters"
+stdin = "2\n"
+stdout = '''
+ a
+bbb
+ a
+'''
+
+[[cases]]
+name = "four letters"
+stdin = "4\n"
+stdout = '''
+   a
+  bbb
+ ccccc
+ddddddd
+ ccccc
+  bbb
+   a
+'''
+hidden = true
+hint = "a size the examples do not show: check every row, not just the first few"
+
+[[cases]]
+name = "five letters"
+stdin = "5\n"
+stdout = '''
+    a
+   bbb
+  ccccc
+ ddddddd
+eeeeeeeee
+ ddddddd
+  ccccc
+   bbb
+    a
+'''
+hidden = true
+hint = "another size: the pattern must hold in the top half and in the bottom half"
+
+[[cases]]
+name = "seven letters"
+stdin = "7\n"
+stdout = '''
+      a
+     bbb
+    ccccc
+   ddddddd
+  eeeeeeeee
+ fffffffffff
+ggggggggggggg
+ fffffffffff
+  eeeeeeeee
+   ddddddd
+    ccccc
+     bbb
+      a
+'''
+hidden = true
+hint = "a bigger diamond: letters, widths and indent must follow the pattern in every row"
+
+[[cases]]
+name = "twelve letters"
+stdin = "12\n"
+stdout = '''
+           a
+          bbb
+         ccccc
+        ddddddd
+       eeeeeeeee
+      fffffffffff
+     ggggggggggggg
+    hhhhhhhhhhhhhhh
+   iiiiiiiiiiiiiiiii
+  jjjjjjjjjjjjjjjjjjj
+ kkkkkkkkkkkkkkkkkkkkk
+lllllllllllllllllllllll
+ kkkkkkkkkkkkkkkkkkkkk
+  jjjjjjjjjjjjjjjjjjj
+   iiiiiiiiiiiiiiiii
+    hhhhhhhhhhhhhhh
+     ggggggggggggg
+      fffffffffff
+       eeeeeeeee
+        ddddddd
+         ccccc
+          bbb
+           a
+'''
+hidden = true
+hint = "a larger input: the loops must follow n, not a size you tried by hand"
+
+[[cases]]
+name = "the whole alphabet"
+stdin = "26\n"
+stdout = '''
+                         a
+                        bbb
+                       ccccc
+                      ddddddd
+                     eeeeeeeee
+                    fffffffffff
+                   ggggggggggggg
+                  hhhhhhhhhhhhhhh
+                 iiiiiiiiiiiiiiiii
+                jjjjjjjjjjjjjjjjjjj
+               kkkkkkkkkkkkkkkkkkkkk
+              lllllllllllllllllllllll
+             mmmmmmmmmmmmmmmmmmmmmmmmm
+            nnnnnnnnnnnnnnnnnnnnnnnnnnn
+           ooooooooooooooooooooooooooooo
+          ppppppppppppppppppppppppppppppp
+         qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+        rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+       sssssssssssssssssssssssssssssssssssss
+      ttttttttttttttttttttttttttttttttttttttt
+     uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+   wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+ yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+     uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+      ttttttttttttttttttttttttttttttttttttttt
+       sssssssssssssssssssssssssssssssssssss
+        rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+         qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+          ppppppppppppppppppppppppppppppp
+           ooooooooooooooooooooooooooooo
+            nnnnnnnnnnnnnnnnnnnnnnnnnnn
+             mmmmmmmmmmmmmmmmmmmmmmmmm
+              lllllllllllllllllllllll
+               kkkkkkkkkkkkkkkkkkkkk
+                jjjjjjjjjjjjjjjjjjj
+                 iiiiiiiiiiiiiiiii
+                  hhhhhhhhhhhhhhh
+                   ggggggggggggg
+                    fffffffffff
+                     eeeeeeeee
+                      ddddddd
+                       ccccc
+                        bbb
+                         a
+'''
+hidden = true
+hint = "the far end of the allowed range: the last letter, the widest row and the indent"
