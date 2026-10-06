@@ -16,7 +16,7 @@ from . import __version__, config, curriculum, engine, gitops, report, runners, 
 from .runners import c as c_runner
 from .scoring import PROVISIONAL_GAMES, rank_title
 from .store import Store
-from .tasks import LANGUAGES, Catalog, Task, TaskError, load_catalog
+from .tasks import LANGUAGES, Catalog, Task, TaskError, load_catalog, load_task
 from .ui import say
 
 
@@ -440,7 +440,9 @@ def _show_pick(args: argparse.Namespace, kind: str) -> None:
 
 def cmd_validate(args: argparse.Namespace) -> None:
     catalog = load_catalog()
-    if args.tasks:
+    if args.path:  # authoring: check task folders directly, wherever they are
+        selected = [load_task(Path(folder) / "task.toml") for folder in args.path]
+    elif args.tasks:
         selected = []
         for text in args.tasks:
             task = catalog.find(text)
@@ -461,7 +463,7 @@ def cmd_validate(args: argparse.Namespace) -> None:
                 say(f"    {problem}")
         else:
             say(f"{ui.ok('✔')} {task.id}  {ui.dim(f'{took:.1f}s')}")
-    if not args.tasks:
+    if not args.tasks and not args.path:
         for lang in LANGUAGES:
             for level in catalog.levels.get(lang, []):
                 if not catalog.curriculum(lang, level.number):
@@ -640,6 +642,7 @@ def build_parser() -> argparse.ArgumentParser:
     add("weekly", cmd_weekly, "this week's task", lang=True)
     p = add("validate", cmd_validate, "check task packs: reference solutions must pass")
     p.add_argument("tasks", nargs="*", help="task ids (default: all)")
+    p.add_argument("--path", action="append", help="validate a task folder directly (repeatable)")
     p.add_argument(
         "-j", "--jobs", type=int, default=min(4, os.cpu_count() or 1), help="tasks graded at once"
     )

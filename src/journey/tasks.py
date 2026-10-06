@@ -250,6 +250,9 @@ def _scan(base: Path, catalog: Catalog) -> None:
     if not base.is_dir():
         return
     for toml_path in sorted(base.rglob("task.toml")):
+        relative = toml_path.relative_to(base)
+        if any(part.startswith((".", "_")) for part in relative.parts[:-1]):
+            continue  # work in progress (.wip-<id>) or scratch: not part of the catalog yet
         task = load_task(toml_path)
         if task.id in catalog.tasks:
             raise TaskError(f"duplicate task id '{task.id}' ({toml_path})")
