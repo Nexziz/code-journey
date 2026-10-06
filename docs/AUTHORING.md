@@ -11,6 +11,7 @@ c05_ft_putchar/
     subject.md     what the learner reads
     starter/       optional files copied into the workspace (training wheels)
     tests/         optional test harness, never copied to the workspace
+    provided/      optional files the task supplies, such as a header or helper module
     solution/      the reference solution (required)
     mutants/       optional deliberately wrong solutions that must fail
 ```
@@ -58,6 +59,36 @@ stdout = "hello\n"              # exact expected output
 exit = 0                        # expected exit status (default 0)
 hidden = false                  # hidden cases run only on push, never in `journey check`
 hint = ""                       # shown when a hidden case fails; never reveal the input
+```
+
+### Files in, files out
+
+A case can create files before the program runs and check the files it leaves behind. Each case runs
+in its own empty directory, so cases never see each other's files. Names must be plain (no `/`).
+
+```toml
+[[cases]]
+name = "uppercases a file"
+args = ["in.txt"]
+stdout = "done\n"
+
+[cases.files]                  # fixtures: created in the working directory before the run
+"in.txt" = "hello\n"
+
+[cases.expect_files]           # must exist afterwards, with exactly this text
+"out.txt" = "HELLO\n"
+```
+
+### Provided files
+
+Anything in `provided/` is copied into the learner's folder when they start the task (so their
+editor can see a header, say) and is **laid over their files at grading time**. Editing a provided
+file therefore changes nothing. Do not list provided files in `files`. Use this for the `struct`
+definition that the learner's functions and your harness must agree on:
+
+```
+c09_ft_point/provided/ft_point.h      typedef struct s_point { int x; int y; } t_point;
+c09_ft_point/tests/harness.c          #include "ft_point.h", then main()
 ```
 
 Use `[[require]]` so that a task really practises the new skill (a loop, a `%`), and `[[forbid]]` to

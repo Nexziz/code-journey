@@ -42,6 +42,15 @@ def next_curriculum_task(store: Store, catalog: Catalog, language: str) -> Task 
     return None
 
 
+def nothing_unlocked(catalog: Catalog, kind: str, language: str) -> str:
+    """Why `journey daily` / `weekly` has nothing to offer, and what to do about it."""
+    tasks = catalog.of_kind(language, kind)
+    if not tasks:
+        return f"There are no {kind} tasks for this track yet."
+    lowest = min(t.level for t in tasks)
+    return f"{kind.capitalize()} tasks unlock when you finish level {lowest}."
+
+
 def practice_streak(store: Store, today: date) -> int:
     """Consecutive days, ending today or yesterday, on which you passed something."""
     days = {date.fromtimestamp(ts) for ts in store.completion_timestamps()}

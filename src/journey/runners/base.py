@@ -5,6 +5,7 @@ from __future__ import annotations
 import io
 import os
 import re
+import shutil
 import signal
 import subprocess
 import threading
@@ -13,11 +14,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from ..tasks import Case, Task
-
-try:
-    import resource
-except ImportError:  # Windows has no resource limits
-    resource = None
 
 MAX_OUTPUT_BYTES = 1 << 20  # a runaway `while (1) write(...)` must not fill your memory
 
@@ -65,17 +61,16 @@ class RunOutput:
     truncated: bool = False
 
 
-def _limits(cpu_seconds: float):
-    if resource is None:
-        return None
+def _limited(cmd: list[str], cpu_seconds: float) -> list[str]:
+    """Wrap a command so the shell sets a CPU-time limit and no core files before exec'ing it.
 
-    def apply() -> None:
-        cpu = int(cpu_seconds) + 2
-        resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
-        resource.setrlimit(resource.RLIMIT_CPU, (cpu, cpu))
-        resource.setrlimit(resource.RLIMIT_FSIZE, (16 << 20, 16 << 20))
-
-    return apply
+    This avoids `preexec_fn`, which is unsafe to use from several threads at once.
+    """
+    shell = shutil.which("sh")
+    if os.name != "posix" or shell is None:
+        return cmd
+    script = 'ulimit -c 0 2>/dev/null; ulimit -t "$0" 2>/dev/null; exec "$@"'
+    return [shell, "-c", script, str(int(cpu_seconds) + 2), *cmd]
 
 
 def _kill(proc: subprocess.Popen) -> None:
@@ -118,14 +113,13 @@ def run_process(
         full_env.update(env)
     try:
         proc = subprocess.Popen(
-            cmd,
+            _limited(cmd, timeout),
             cwd=cwd,
             env=full_env,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             start_new_session=True,
-            preexec_fn=_limits(timeout),
         )
     except OSError as exc:
         return RunOutput("", f"could not start {cmd[0]}: {exc}", None)
@@ -211,7 +205,30 @@ def describe_args(case: Case) -> str:
     return ", ".join(parts)
 
 
-def compare_output(task: Task, case: Case, out: RunOutput) -> tuple[bool, str]:
+def prepare_case_dir(base: Path, index: int, case: Case) -> Path:
+    """A fresh working directory for one case, holding its fixture files."""
+    directory = base / f"case{index}"
+    directory.mkdir(parents=True, exist_ok=True)
+    for name, text in case.files:
+        (directory / name).write_text(text, encoding="utf-8")
+    return directory
+
+
+def check_expected_files(case: Case, directory: Path) -> str:
+    """Compare the files a case expects the program to leave behind. Returns "" if all match."""
+    for name, expected in case.expect_files:
+        path = directory / name
+        if not path.is_file():
+            return f"the file '{name}' was not created"
+        got = path.read_text(encoding="utf-8", errors="replace")
+        if got != expected:
+            return f"file '{name}': expected {clip(repr(expected))}\n     got {clip(repr(got))}"
+    return ""
+
+
+def compare_output(
+    task: Task, case: Case, out: RunOutput, directory: Path | None = None
+) -> tuple[bool, str]:
     """Judge one finished run. Returns (passed, explanation)."""
     if out.timed_out:
         return False, f"timed out after {task.timeout:g}s (an infinite loop?)"
@@ -223,6 +240,8 @@ def compare_output(task: Task, case: Case, out: RunOutput) -> tuple[bool, str]:
         return False, f"exit status {out.returncode}, expected {case.exit_code}"
     if out.stdout != case.stdout:
         return False, f"expected {clip(repr(case.stdout))}\n     got {clip(repr(out.stdout))}"
+    if directory is not None and (problem := check_expected_files(case, directory)):
+        return False, problem
     return True, ""
 
 

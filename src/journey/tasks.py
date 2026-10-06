@@ -40,6 +40,8 @@ class Case:
     exit_code: int = 0
     hidden: bool = False
     hint: str = ""  # shown when a hidden case fails
+    files: tuple[tuple[str, str], ...] = ()  # fixtures: files created in the working directory
+    expect_files: tuple[tuple[str, str], ...] = ()  # files the program must leave behind
 
 
 @dataclass(frozen=True)
@@ -90,6 +92,11 @@ class Task:
     @property
     def solution_dir(self) -> Path:
         return self.root / "solution"
+
+    @property
+    def provided_dir(self) -> Path:
+        """Files the task supplies (a header, a helper module); they overlay the learner's."""
+        return self.root / "provided"
 
     @property
     def harness_path(self) -> Path | None:
@@ -146,6 +153,16 @@ def _tuple(data: dict, key: str) -> tuple[str, ...]:
     return tuple(value)
 
 
+def _file_table(case: dict, key: str) -> tuple[tuple[str, str], ...]:
+    table = case.get(key, {})
+    if not isinstance(table, dict) or not all(isinstance(v, str) for v in table.values()):
+        raise TaskError(f"[cases.{key}] must map file names to text")
+    for name in table:
+        if "/" in name or "\\" in name or name in ("", ".", ".."):
+            raise TaskError(f"[cases.{key}] file names must be plain names, not '{name}'")
+    return tuple(table.items())
+
+
 def _rules(data: dict, key: str) -> tuple[Rule, ...]:
     rules = []
     for item in data.get(key, []):
@@ -178,6 +195,8 @@ def load_task(toml_path: Path) -> Task:
                 exit_code=c.get("exit", 0),
                 hidden=c.get("hidden", False),
                 hint=c.get("hint", ""),
+                files=_file_table(c, "files"),
+                expect_files=_file_table(c, "expect_files"),
             )
             for c in data.get("cases", [])
         )

@@ -66,7 +66,7 @@ class App:
         if text in ("daily", "weekly"):
             task = curriculum.pick_task(self.store, self.catalog, text, language, date.today())
             if task is None:
-                raise Fail(f"No {text} task is unlocked yet: finish level 1 of the track first.")
+                raise Fail(curriculum.nothing_unlocked(self.catalog, text, language))
             return task
         task = self.catalog.find(text)
         if task is None:
@@ -130,10 +130,11 @@ def _ensure_task_folder(app: App, task: Task) -> tuple[Path, bool]:
     folder = app.workspace / task.id
     created = not folder.exists()
     folder.mkdir(parents=True, exist_ok=True)
-    if task.starter_dir.is_dir():
-        for src in task.starter_dir.iterdir():
-            if src.is_file() and not (folder / src.name).exists():
-                shutil.copy(src, folder / src.name)
+    for source in (task.starter_dir, task.provided_dir):
+        if source.is_dir():
+            for src in source.iterdir():
+                if src.is_file() and not (folder / src.name).exists():
+                    shutil.copy(src, folder / src.name)
     return folder, created
 
 
@@ -171,6 +172,10 @@ def cmd_start(args: argparse.Namespace) -> None:
     )
     say(f" Folder:  cd {pretty(folder)}")
     say(f" Files:   {', '.join(task.files)}")
+    if task.provided_dir.is_dir():
+        provided = sorted(p.name for p in task.provided_dir.iterdir() if p.is_file())
+        note = ui.dim("(do not edit: the grader uses its own copy)")
+        say(f" Provided: {', '.join(provided)}  {note}")
     say(
         ui.dim(' Try it: journey check   ·   Turn in: git add . && git commit -m "..." && git push')
     )
@@ -295,7 +300,7 @@ def _print_pick(app: App, kind: str, lang: str, today: date) -> None:
     label = f" {kind.capitalize():<9}"
     task = curriculum.pick_task(app.store, app.catalog, kind, lang, today)
     if task is None:
-        say(f"{label}{ui.dim('unlocks when you finish level 1')}")
+        say(f"{label}{ui.dim(curriculum.nothing_unlocked(app.catalog, kind, lang))}")
         return
     status = _task_status(app, task, _period_start(kind, today))
     say(
@@ -412,9 +417,7 @@ def _show_pick(args: argparse.Namespace, kind: str) -> None:
     today = date.today()
     task = curriculum.pick_task(app.store, app.catalog, kind, lang, today)
     if task is None:
-        say(
-            f"No {kind} task is unlocked yet. Finish level 1 of the {report.language_name(lang)} track."
-        )
+        say(curriculum.nothing_unlocked(app.catalog, kind, lang))
         return
     say(
         ui.rule(
@@ -450,10 +453,7 @@ def cmd_validate(args: argparse.Namespace) -> None:
         )
 
     failures = 0
-    for task in selected:
-        started = time.time()
-        problems = validate.validate_task(task, catalog)
-        took = time.time() - started
+    for task, problems, took in validate.iter_validate(selected, catalog, workers=args.jobs):
         if problems:
             failures += 1
             say(f"{ui.bad('✘')} {task.id}")
@@ -640,6 +640,9 @@ def build_parser() -> argparse.ArgumentParser:
     add("weekly", cmd_weekly, "this week's task", lang=True)
     p = add("validate", cmd_validate, "check task packs: reference solutions must pass")
     p.add_argument("tasks", nargs="*", help="task ids (default: all)")
+    p.add_argument(
+        "-j", "--jobs", type=int, default=min(4, os.cpu_count() or 1), help="tasks graded at once"
+    )
     add("doctor", cmd_doctor, "check that everything journey needs is in place")
     return parser
 

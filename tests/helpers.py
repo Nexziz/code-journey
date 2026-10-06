@@ -36,6 +36,7 @@ def make_task(
     forbidden_calls: tuple[str, ...] = (),
     forbidden_imports: tuple[str, ...] = (),
     harness: tuple[str, str] | None = None,
+    provided: dict[str, str] | None = None,
 ) -> Task:
     """Write a minimal task pack under `root` and load it."""
     folder = root / name
@@ -69,8 +70,17 @@ def make_task(
         lines += ["[[forbid]]", f"pattern = {q(pattern)}", f"message = {q(message)}"]
     for case in cases or [{"name": "default", "stdout": "ok\n"}]:
         lines.append("[[cases]]")
+        tables = {k: v for k, v in case.items() if isinstance(v, dict)}
         for key, value in case.items():
-            lines.append(f"{key} = {q(value)}")
+            if key not in tables:
+                lines.append(f"{key} = {q(value)}")
+        for key, table in tables.items():  # fixtures: [cases.files] and [cases.expect_files]
+            lines.append(f"[cases.{key}]")
+            lines.extend(f"{q(name)} = {q(text)}" for name, text in table.items())
+    if provided:
+        (folder / "provided").mkdir()
+        for name, text in provided.items():
+            (folder / "provided" / name).write_text(text)
     (folder / "task.toml").write_text("\n".join(lines) + "\n")
     (folder / "subject.md").write_text("# Test\n")
     return load_task(folder / "task.toml")

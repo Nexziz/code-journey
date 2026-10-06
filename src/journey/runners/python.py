@@ -14,6 +14,7 @@ from .base import (
     check_rules,
     compare_output,
     describe_args,
+    prepare_case_dir,
     run_process,
     strip_python_comments,
     style_issues,
@@ -86,23 +87,28 @@ def grade(task: Task, workdir: Path, *, include_hidden: bool) -> GradeResult:
         tmp_path = Path(tmp)
         for name in task.files:
             shutil.copy(workdir / name, tmp_path / name)
+        if task.provided_dir.is_dir():  # the task's own helpers win over the learner's copies
+            for provided in task.provided_dir.iterdir():
+                if provided.is_file():
+                    shutil.copy(provided, tmp_path / provided.name)
         entry = py_files[0]
         if task.harness_path:
             shutil.copy(task.harness_path, tmp_path / task.harness_path.name)
             entry = task.harness_path.name
 
         env = {"PYTHONDONTWRITEBYTECODE": "1", "PYTHONIOENCODING": "utf-8"}
-        for case in task.cases:
+        for index, case in enumerate(task.cases):
             if case.hidden and not include_hidden:
                 continue
+            case_dir = prepare_case_dir(tmp_path, index, case)
             out = run_process(
-                [sys.executable, entry, *case.args],
-                cwd=tmp_path,
+                [sys.executable, str(tmp_path / entry), *case.args],
+                cwd=case_dir,
                 stdin=case.stdin,
                 timeout=task.timeout,
                 env=env,
             )
-            passed, why = compare_output(task, case, out)
+            passed, why = compare_output(task, case, out, case_dir)
             if not passed and out.returncode not in (None, 0) and out.stderr.strip():
                 last = out.stderr.strip().splitlines()[-1]
                 why = f"{last}\n   (exit status {out.returncode})"

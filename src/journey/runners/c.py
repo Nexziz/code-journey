@@ -15,6 +15,7 @@ from .base import (
     clip_lines,
     compare_output,
     describe_args,
+    prepare_case_dir,
     run_process,
     strip_c_comments,
     style_issues,
@@ -103,17 +104,28 @@ def grade(task: Task, workdir: Path, *, include_hidden: bool) -> GradeResult:
     with tempfile.TemporaryDirectory(prefix="journey-c-") as tmp:
         tmp_path = Path(tmp)
 
+        # Everything is built from a private copy: the learner's files, then whatever the task
+        # provides (a header, say), which wins over a learner's own version.
+        src_dir = tmp_path / "src"
+        src_dir.mkdir()
+        for name in task.files:
+            shutil.copy(workdir / name, src_dir / name)
+        if task.provided_dir.is_dir():
+            for provided in task.provided_dir.iterdir():
+                if provided.is_file():
+                    shutil.copy(provided, src_dir / provided.name)
+
         # 1. Compile each file on its own, as strictly as the Norm-style rules demand.
         objects: list[Path] = []
         for name in c_files:
             obj = tmp_path / f"{Path(name).stem}.o"
             build = run_process(
-                [cc, *STRICT, *task.cflags, "-I", str(workdir), "-c", name, "-o", str(obj)],
-                cwd=workdir,
+                [cc, *STRICT, *task.cflags, "-I", str(src_dir), "-c", name, "-o", str(obj)],
+                cwd=src_dir,
                 timeout=30,
             )
             if build.returncode != 0:
-                report = clip_lines(_clean(build.stderr or build.stdout, workdir))
+                report = clip_lines(_clean(build.stderr or build.stdout, src_dir, workdir))
                 result.add("Compilation (-Wall -Wextra -Werror)", False, report)
                 return result
             objects.append(obj)
@@ -148,7 +160,7 @@ def grade(task: Task, workdir: Path, *, include_hidden: bool) -> GradeResult:
             )
         elif not can_detect_leaks:
             result.notes.append("leak detection unavailable here: leaks are not checked")
-        sources_to_build = [str(workdir / f) for f in c_files]
+        sources_to_build = [str(src_dir / f) for f in c_files]
         if task.harness_path:
             harness_copy = tmp_path / task.harness_path.name
             shutil.copy(task.harness_path, harness_copy)
@@ -163,17 +175,17 @@ def grade(task: Task, workdir: Path, *, include_hidden: bool) -> GradeResult:
                 *flags,
                 *task.cflags,
                 "-I",
-                str(workdir),
+                str(src_dir),
                 *sources_to_build,
                 "-o",
                 str(exe),
                 *task.ldflags,
             ],
-            cwd=workdir,
+            cwd=src_dir,
             timeout=60,
         )
         if link.returncode != 0:
-            report = clip_lines(_clean(link.stderr or link.stdout, workdir, tmp_path))
+            report = clip_lines(_clean(link.stderr or link.stdout, src_dir, workdir, tmp_path))
             result.add("Linking", False, report)
             return result
 
@@ -181,22 +193,23 @@ def grade(task: Task, workdir: Path, *, include_hidden: bool) -> GradeResult:
             "ASAN_OPTIONS": f"detect_leaks={int(can_detect_leaks)}:abort_on_error=0",
             "UBSAN_OPTIONS": "print_stacktrace=1",
         }
-        for case in task.cases:
+        for index, case in enumerate(task.cases):
             if case.hidden and not include_hidden:
                 continue
+            case_dir = prepare_case_dir(tmp_path, index, case)
             out = run_process(
                 [str(exe), *case.args],
-                cwd=tmp_path,
+                cwd=case_dir,
                 stdin=case.stdin,
                 timeout=task.timeout,
                 env=env,
             )
             if any(marker in out.stderr for marker in SANITIZER_MARKERS):
                 label = "hidden test" if case.hidden else case.name
-                detail = _clean(_sanitizer_summary(out.stderr, c_files), workdir, tmp_path)
+                detail = _clean(_sanitizer_summary(out.stderr, c_files), src_dir, workdir, tmp_path)
                 result.add(f"Test: {label}", False, detail, case.hidden)
                 continue
-            passed, why = compare_output(task, case, out)
+            passed, why = compare_output(task, case, out, case_dir)
             if case.hidden:
                 result.add(
                     "Hidden test", passed, case.hint or "an edge case you did not cover", True

@@ -160,6 +160,15 @@ class PickTests(ProgressCase):
         self.assertEqual(task.id, "w1")
 
 
+class NothingUnlockedTests(ProgressCase):
+    def test_the_message_names_the_level_that_opens_dailies(self):
+        message = curriculum.nothing_unlocked(self.catalog, "daily", "python")
+        self.assertIn("level 1", message)  # the lowest daily needs level 1
+        self.assertIn(
+            "no weekly", curriculum.nothing_unlocked(Catalog(), "weekly", "python").lower()
+        )
+
+
 class StreakTests(ProgressCase):
     def complete_on(self, day: date, task_id="l1a"):
         ts = datetime.combine(day, datetime.min.time()).timestamp() + 12 * 3600

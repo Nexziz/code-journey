@@ -5,6 +5,9 @@ from __future__ import annotations
 import re
 import shutil
 import tempfile
+import time
+from collections.abc import Iterable, Iterator
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from . import runners
@@ -62,3 +65,16 @@ def validate_task(task: Task, catalog: Catalog) -> list[str]:
         if starter.passed:
             problems.append("the starter files already pass; the learner would have nothing to do")
     return problems
+
+
+def iter_validate(
+    tasks: Iterable[Task], catalog: Catalog, *, workers: int = 4
+) -> Iterator[tuple[Task, list[str], float]]:
+    """Validate tasks a few at a time, yielding (task, problems, seconds) in the given order."""
+
+    def one(task: Task) -> tuple[Task, list[str], float]:
+        started = time.time()
+        return task, validate_task(task, catalog), time.time() - started
+
+    with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+        yield from pool.map(one, list(tasks))

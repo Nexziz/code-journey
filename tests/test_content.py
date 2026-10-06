@@ -62,11 +62,8 @@ class EveryTaskIsSoundTests(unittest.TestCase):
     """Slow on purpose: grades every model solution, starter and known-bad mutant."""
 
     def test_validate_every_task(self):
-        failures = {}
-        for task in CATALOG.tasks.values():
-            problems = validate.validate_task(task, CATALOG)
-            if problems:
-                failures[task.id] = problems
+        results = validate.iter_validate(CATALOG.tasks.values(), CATALOG, workers=4)
+        failures = {task.id: problems for task, problems, _ in results if problems}
         self.assertEqual(failures, {})
 
 

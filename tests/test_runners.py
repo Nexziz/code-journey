@@ -52,6 +52,121 @@ class SourceHelperTests(unittest.TestCase):
         self.assertIn('"#for"', stripped)
 
 
+class FixtureTests(TempDirTestCase):
+    """Cases can hand the program files to read and check the files it leaves behind."""
+
+    def grade(self, task, files):
+        return runners.grade(task, write_files(self.tmp / "work", files), include_hidden=True)
+
+    def test_python_reads_a_fixture_and_writes_a_file(self):
+        task = make_task(
+            self.tmp / "pack",
+            cases=[
+                {
+                    "name": "upper",
+                    "args": ["in.txt"],
+                    "stdout": "done\n",
+                    "files": {"in.txt": "hello\n"},
+                    "expect_files": {"out.txt": "HELLO\n"},
+                }
+            ],
+        )
+        source = (
+            "import sys\n"
+            "text = open(sys.argv[1]).read()\n"
+            "open('out.txt', 'w').write(text.upper())\n"
+            "print('done')\n"
+        )
+        self.assertTrue(self.grade(task, {"sol.py": source}).passed)
+
+    def test_a_missing_or_wrong_output_file_is_reported(self):
+        task = make_task(
+            self.tmp / "pack",
+            cases=[{"name": "writes", "stdout": "", "expect_files": {"out.txt": "right\n"}}],
+        )
+        missing = self.grade(task, {"sol.py": "pass\n"})
+        self.assertIn("was not created", missing.checks[-1].detail)
+        wrong = self.grade(task, {"sol.py": "open('out.txt', 'w').write('wrong\\n')\n"})
+        self.assertIn("expected 'right\\n'", wrong.checks[-1].detail)
+
+    def test_every_case_gets_a_fresh_directory(self):
+        task = make_task(
+            self.tmp / "pack",
+            cases=[
+                {"name": "first", "stdout": "created\n"},
+                {"name": "second", "stdout": "created\n"},
+            ],
+        )
+        source = (
+            "import os\n"
+            "print('stale' if os.path.exists('leftover') else 'created')\n"
+            "open('leftover', 'w').write('x')\n"
+        )
+        self.assertTrue(self.grade(task, {"sol.py": source}).passed)
+
+    def test_provided_files_overlay_the_learners_own(self):
+        task = make_task(
+            self.tmp / "pack",
+            harness=("harness.py", "from sol import answer\nprint(answer())\n"),
+            provided={"helper.py": "VALUE = 42\n"},
+            cases=[{"name": "uses the helper", "stdout": "42\n"}],
+        )
+        files = {"sol.py": "from helper import VALUE\n\n\ndef answer():\n    return VALUE\n"}
+        self.assertTrue(self.grade(task, files).passed)
+        # a learner who edits the provided file gains nothing: it is not even looked at
+        files["helper.py"] = "VALUE = 7\n"
+        self.assertTrue(self.grade(task, files).passed)
+
+    @unittest.skipUnless(HAS_CC, "no C compiler")
+    def test_c_reads_a_fixture_and_a_provided_header(self):
+        harness = (
+            "harness.c",
+            '#include <stdio.h>\n#include "twice.h"\nint main(void)\n{\n'
+            '    printf("%d\\n", twice(21));\n    return (0);\n}\n',
+        )
+        task = make_task(
+            self.tmp / "pack",
+            language="c",
+            files=("twice.c",),
+            allowed=(),
+            harness=harness,
+            provided={"twice.h": "#ifndef TWICE_H\n# define TWICE_H\nint twice(int n);\n#endif\n"},
+            cases=[{"name": "twice", "stdout": "42\n"}],
+        )
+        source = '#include "twice.h"\n\nint twice(int n)\n{\n    return (n * 2);\n}\n'
+        self.assertTrue(self.grade(task, {"twice.c": source}).passed)
+
+    @unittest.skipUnless(HAS_CC, "no C compiler")
+    def test_c_program_reads_a_file_and_leaves_one_behind(self):
+        task = make_task(
+            self.tmp / "pack",
+            language="c",
+            files=("copy.c",),
+            allowed=("open", "read", "write", "close"),
+            cases=[
+                {
+                    "name": "copies",
+                    "args": ["in.txt"],
+                    "stdout": "",
+                    "files": {"in.txt": "abc\n"},
+                    "expect_files": {"out.txt": "abc\n"},
+                }
+            ],
+        )
+        source = (
+            "#include <fcntl.h>\n#include <unistd.h>\n\n"
+            "int main(int argc, char **argv)\n{\n"
+            "    char buf[64];\n    int in;\n    int out;\n    int n;\n\n"
+            "    if (argc != 2)\n        return (1);\n"
+            "    in = open(argv[1], O_RDONLY);\n"
+            '    out = open("out.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);\n'
+            "    n = read(in, buf, sizeof(buf));\n"
+            "    write(out, buf, n);\n    close(in);\n    close(out);\n    return (0);\n}\n"
+        )
+        result = self.grade(task, {"copy.c": source})
+        self.assertTrue(result.passed, [(c.name, c.detail) for c in result.checks])
+
+
 class StyleTests(TempDirTestCase):
     def test_style_issues(self):
         path = self.tmp / "a.c"
