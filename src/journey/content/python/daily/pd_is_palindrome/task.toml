@@ -1,0 +1,52 @@
+title = "Palindromes, properly"
+language = "python"
+kind = "daily"
+level = 5
+order = 50
+rating = 780
+par_minutes = 20
+files = ["is_palindrome.py"]
+harness = "tests/harness.py"
+new_skills = []
+skills = ["loops", "conditions", "functions"]
+
+[[cases]]
+name = "a word"
+args = ["level"]
+stdout = "True\n"
+
+[[cases]]
+name = "not a palindrome"
+args = ["journey"]
+stdout = "False\n"
+
+[[cases]]
+name = "the empty string"
+args = [""]
+stdout = "True\n"
+
+[[cases]]
+name = "a famous sentence"
+args = ["A man, a plan, a canal: Panama"]
+stdout = "True\n"
+
+[[cases]]
+name = "two letters"
+args = ["ab"]
+stdout = "False\n"
+hidden = true
+hint = "two different letters"
+
+[[cases]]
+name = "quotes and capitals"
+args = ["No 'x' in Nixon"]
+stdout = "True\n"
+hidden = true
+hint = "ignore case and everything that is not a letter or a digit"
+
+[[cases]]
+name = "digits count"
+args = ["0P"]
+stdout = "False\n"
+hidden = true
+hint = "digits are characters too: '0' and 'p' differ"

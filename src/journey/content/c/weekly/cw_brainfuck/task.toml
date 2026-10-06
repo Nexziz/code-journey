@@ -1,0 +1,74 @@
+title = "Brainfuck interpreter"
+language = "c"
+kind = "weekly"
+level = 7
+order = 50
+rating = 1150
+par_minutes = 180
+files = ["brainfuck.c"]
+allowed = ["write"]
+new_skills = []
+skills = ["loops", "conditions", "strings", "pointers"]
+
+[[require]]
+pattern = "\\bargv\\b"
+message = "Reads argv"
+
+[[cases]]
+name = "one letter"
+args = ["++++++++[>++++++++<-]>+."]
+stdout = "A"
+
+[[cases]]
+name = "three letters"
+args = ["++++++++[>++++++++<-]>+.+.+."]
+stdout = "ABC"
+
+[[cases]]
+name = "comments are ignored"
+args = ["this is a comment ++++++++[>++++++++<-]>+. and more"]
+stdout = "A"
+
+[[cases]]
+name = "hello world"
+args = ["++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."]
+stdout = "Hello World!\n"
+
+[[cases]]
+name = "no program"
+stdout = "\n"
+
+[[cases]]
+name = "cells wrap around"
+args = ["++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++[.]+++++++[>+++++++++<-]>+++."]
+stdout = "B"
+hidden = true
+hint = "a cell is one byte: 255 + 1 wraps to 0, so 256 plus signs leave it at 0"
+
+[[cases]]
+name = "wrapping downwards"
+args = ["-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++."]
+stdout = "A"
+hidden = true
+hint = "0 - 1 is 255 in a byte"
+
+[[cases]]
+name = "nested loops"
+args = ["++++++[>++++++[>++<-]<-]>>."]
+stdout = "H"
+hidden = true
+hint = "a loop inside a loop"
+
+[[cases]]
+name = "a skipped loop"
+args = ["[.]+++++++[>+++++++++<-]>+++."]
+stdout = "B"
+hidden = true
+hint = "[ jumps past the matching ] when the cell is 0"
+
+[[cases]]
+name = "two arguments"
+args = ["+.", "+."]
+stdout = "\n"
+hidden = true
+hint = "exactly one argument is expected"

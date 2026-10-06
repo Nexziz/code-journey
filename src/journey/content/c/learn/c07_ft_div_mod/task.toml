@@ -1,0 +1,41 @@
+title = "Division and remainder"
+language = "c"
+kind = "learn"
+level = 7
+order = 2
+rating = 840
+par_minutes = 15
+files = ["ft_div_mod.c"]
+allowed = []
+harness = "tests/harness.c"
+new_skills = ["pointers"]
+skills = ["variables", "functions", "pointers"]
+
+[[cases]]
+name = "17 by 5"
+args = ["17", "5"]
+stdout = "3 2\n"
+
+[[cases]]
+name = "exact division"
+args = ["20", "4"]
+stdout = "5 0\n"
+
+[[cases]]
+name = "negative"
+args = ["-7", "2"]
+stdout = "-3 -1\n"
+
+[[cases]]
+name = "zero divided"
+args = ["0", "3"]
+stdout = "0 0\n"
+hidden = true
+hint = "zero"
+
+[[cases]]
+name = "smaller than the divisor"
+args = ["9", "10"]
+stdout = "0 9\n"
+hidden = true
+hint = "the quotient is 0"

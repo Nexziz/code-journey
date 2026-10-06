@@ -1,0 +1,52 @@
+title = "All the primes"
+language = "python"
+kind = "daily"
+level = 5
+order = 50
+rating = 860
+par_minutes = 35
+files = ["primes.py"]
+harness = "tests/harness.py"
+new_skills = []
+skills = ["loops", "conditions", "functions"]
+
+[[cases]]
+name = "up to 10"
+args = ["10"]
+stdout = "4 7\n"
+
+[[cases]]
+name = "up to 2"
+args = ["2"]
+stdout = "1 2\n"
+
+[[cases]]
+name = "up to 1"
+args = ["1"]
+stdout = "0 -\n"
+
+[[cases]]
+name = "up to 30"
+args = ["30"]
+stdout = "10 29\n"
+
+[[cases]]
+name = "the limit itself is prime"
+args = ["13"]
+stdout = "6 13\n"
+hidden = true
+hint = "the limit is included"
+
+[[cases]]
+name = "up to 100000"
+args = ["100000"]
+stdout = "9592 99991\n"
+hidden = true
+hint = "it must be reasonably fast"
+
+[[cases]]
+name = "up to 300000"
+args = ["300000"]
+stdout = "25997 299993\n"
+hidden = true
+hint = "it must be reasonably fast: try the sieve of Eratosthenes"

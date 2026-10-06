@@ -1,0 +1,34 @@
+title = "Swap two values"
+language = "c"
+kind = "learn"
+level = 7
+order = 1
+rating = 820
+par_minutes = 15
+files = ["ft_swap.c"]
+allowed = []
+harness = "tests/harness.c"
+new_skills = ["pointers"]
+skills = ["variables", "functions", "pointers"]
+
+[[cases]]
+name = "two numbers"
+args = ["1", "2"]
+stdout = "2 1\n"
+
+[[cases]]
+name = "negative and positive"
+args = ["-5", "9"]
+stdout = "9 -5\n"
+
+[[cases]]
+name = "equal values"
+args = ["7", "7"]
+stdout = "7 7\n"
+
+[[cases]]
+name = "the extremes"
+args = ["0", "2147483647"]
+stdout = "2147483647 0\n"
+hidden = true
+hint = "large values"

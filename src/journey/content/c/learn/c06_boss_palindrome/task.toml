@@ -1,0 +1,65 @@
+title = "Boss: palindromes"
+language = "c"
+kind = "boss"
+level = 6
+order = 9
+rating = 880
+par_minutes = 35
+files = ["palindrome.c"]
+allowed = ["write"]
+new_skills = []
+skills = ["output", "loops", "conditions", "functions", "strings"]
+
+[[require]]
+pattern = "\\bargv\\b"
+message = "Reads argv"
+
+[[cases]]
+name = "a palindrome"
+args = ["level"]
+stdout = "yes\n"
+
+[[cases]]
+name = "not a palindrome"
+args = ["journey"]
+stdout = "no\n"
+
+[[cases]]
+name = "even length"
+args = ["abba"]
+stdout = "yes\n"
+
+[[cases]]
+name = "the empty string"
+args = [""]
+stdout = "yes\n"
+
+[[cases]]
+name = "no argument"
+stdout = "\n"
+
+[[cases]]
+name = "two letters"
+args = ["ab"]
+stdout = "no\n"
+
+[[cases]]
+name = "case matters"
+args = ["Racecar"]
+stdout = "no\n"
+hidden = true
+hint = "'R' and 'r' are different characters"
+
+[[cases]]
+name = "a long palindrome"
+args = ["racecar"]
+stdout = "yes\n"
+hidden = true
+hint = "odd length"
+
+[[cases]]
+name = "too many arguments"
+args = ["a", "b"]
+stdout = "\n"
+hidden = true
+hint = "exactly one argument is expected"

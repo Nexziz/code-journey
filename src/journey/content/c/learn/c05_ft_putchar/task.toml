@@ -1,0 +1,34 @@
+title = "Your own putchar"
+language = "c"
+kind = "learn"
+level = 5
+order = 1
+rating = 740
+par_minutes = 10
+files = ["ft_putchar.c"]
+allowed = ["write"]
+harness = "tests/harness.c"
+new_skills = ["functions"]
+skills = ["output", "variables", "functions"]
+
+[[cases]]
+name = "prints a"
+args = ["a"]
+stdout = "a"
+
+[[cases]]
+name = "prints Z"
+args = ["Z"]
+stdout = "Z"
+
+[[cases]]
+name = "prints a digit"
+args = ["7"]
+stdout = "7"
+
+[[cases]]
+name = "another character"
+args = ["~"]
+stdout = "~"
+hidden = true
+hint = "any printable character"

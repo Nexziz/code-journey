@@ -1,0 +1,19 @@
+title = "Boss: the box"
+language = "c"
+kind = "boss"
+level = 1
+order = 9
+rating = 680
+par_minutes = 15
+files = ["box.c"]
+allowed = ["write"]
+new_skills = []
+skills = ["output"]
+
+[[require]]
+pattern = "\\bwrite\\s*\\("
+message = "Uses write()"
+
+[[cases]]
+name = "prints the box"
+stdout = "+---------+\n| journey |\n+---------+\n"

@@ -1,0 +1,47 @@
+title = "Reverse an array"
+language = "c"
+kind = "daily"
+level = 7
+order = 50
+rating = 840
+par_minutes = 20
+files = ["ft_rev_int_tab.c"]
+allowed = []
+harness = "tests/harness.c"
+new_skills = []
+skills = ["loops", "functions", "pointers"]
+
+[[cases]]
+name = "five numbers"
+args = ["1", "2", "3", "4", "5"]
+stdout = "5 4 3 2 1\n"
+
+[[cases]]
+name = "even count"
+args = ["1", "2", "3", "4"]
+stdout = "4 3 2 1\n"
+
+[[cases]]
+name = "single number"
+args = ["7"]
+stdout = "7\n"
+
+[[cases]]
+name = "empty array"
+stdout = "\n"
+hidden = true
+hint = "size 0"
+
+[[cases]]
+name = "negative numbers"
+args = ["-1", "0", "1"]
+stdout = "1 0 -1\n"
+hidden = true
+hint = "negative numbers"
+
+[[cases]]
+name = "ten numbers"
+args = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+stdout = "9 8 7 6 5 4 3 2 1 0\n"
+hidden = true
+hint = "a longer array"

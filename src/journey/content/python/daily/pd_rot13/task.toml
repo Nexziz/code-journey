@@ -1,0 +1,46 @@
+title = "Rot 13"
+language = "python"
+kind = "daily"
+level = 4
+order = 50
+rating = 800
+par_minutes = 30
+files = ["rot13.py"]
+forbidden_calls = [".translate", ".maketrans"]
+forbidden_imports = ["codecs"]
+new_skills = []
+skills = ["loops", "conditions"]
+
+[[cases]]
+name = "a greeting"
+stdin = "Hello, World!\n"
+stdout = "Uryyb, Jbeyq!\n"
+
+[[cases]]
+name = "lowercase end"
+stdin = "abcxyz\n"
+stdout = "nopklm\n"
+
+[[cases]]
+name = "uppercase end"
+stdin = "ABCXYZ\n"
+stdout = "NOPKLM\n"
+
+[[cases]]
+name = "empty line"
+stdin = "\n"
+stdout = "\n"
+
+[[cases]]
+name = "a sentence"
+stdin = "Why did the chicken cross the road?\n"
+stdout = "Jul qvq gur puvpxra pebff gur ebnq?\n"
+hidden = true
+hint = "a longer text with punctuation"
+
+[[cases]]
+name = "digits and symbols stay"
+stdin = "13 is lucky: n->a\n"
+stdout = "13 vf yhpxl: a->n\n"
+hidden = true
+hint = "only letters change"

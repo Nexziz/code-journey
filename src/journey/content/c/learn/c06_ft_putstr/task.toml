@@ -1,0 +1,41 @@
+title = "Print a string"
+language = "c"
+kind = "learn"
+level = 6
+order = 2
+rating = 790
+par_minutes = 12
+files = ["ft_putstr.c"]
+allowed = ["write"]
+harness = "tests/harness.c"
+new_skills = ["strings"]
+skills = ["output", "loops", "functions", "strings"]
+
+[[cases]]
+name = "hello"
+args = ["hello"]
+stdout = "hello\n"
+
+[[cases]]
+name = "empty string"
+args = [""]
+stdout = "\n"
+
+[[cases]]
+name = "spaces and digits"
+args = ["42 is a number!"]
+stdout = "42 is a number!\n"
+
+[[cases]]
+name = "a tab inside"
+args = ["tab\there"]
+stdout = "tab\there\n"
+hidden = true
+hint = "special characters"
+
+[[cases]]
+name = "a long string"
+args = ["xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"]
+stdout = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n"
+hidden = true
+hint = "a really long string"

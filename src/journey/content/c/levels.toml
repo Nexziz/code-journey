@@ -1,0 +1,41 @@
+[[level]]
+number = 1
+title = "Say something"
+skill = "output"
+blurb = "A C program starts at main(). write() sends bytes to the terminal."
+
+[[level]]
+number = 2
+title = "Remember things"
+skill = "variables"
+blurb = "Variables hold values: int for whole numbers, char for one character. Arithmetic works on both."
+
+[[level]]
+number = 3
+title = "Again and again"
+skill = "loops"
+blurb = "while and for repeat work, so you never copy-paste a line twenty times."
+
+[[level]]
+number = 4
+title = "Make decisions"
+skill = "conditions"
+blurb = "if / else if / else choose what happens. Comparisons and % drive the choices."
+
+[[level]]
+number = 5
+title = "Name your steps"
+skill = "functions"
+blurb = "Functions split a problem into named pieces that you can reuse and test one by one."
+
+[[level]]
+number = 6
+title = "Words and arguments"
+skill = "strings"
+blurb = "A string is an array of chars ending in '\\0'. argc and argv hand your program its arguments."
+
+[[level]]
+number = 7
+title = "Point at things"
+skill = "pointers"
+blurb = "A pointer holds an address. It lets a function change its caller's variables and walk through arrays."

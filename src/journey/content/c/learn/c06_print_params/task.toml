@@ -1,0 +1,36 @@
+title = "Echo the arguments"
+language = "c"
+kind = "learn"
+level = 6
+order = 3
+rating = 800
+par_minutes = 15
+files = ["print_params.c"]
+allowed = ["write"]
+new_skills = ["strings"]
+skills = ["output", "loops", "strings"]
+
+[[require]]
+pattern = "\\bargv\\b"
+message = "Reads argv"
+
+[[cases]]
+name = "three arguments"
+args = ["one", "two", "three"]
+stdout = "one\ntwo\nthree\n"
+
+[[cases]]
+name = "no arguments"
+stdout = ""
+
+[[cases]]
+name = "a single argument"
+args = ["solo"]
+stdout = "solo\n"
+
+[[cases]]
+name = "an empty argument"
+args = ["a", "", "b"]
+stdout = "a\n\nb\n"
+hidden = true
+hint = "an argument can be the empty string"

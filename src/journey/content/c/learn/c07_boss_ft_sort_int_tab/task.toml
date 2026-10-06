@@ -1,0 +1,52 @@
+title = "Boss: sort an array"
+language = "c"
+kind = "boss"
+level = 7
+order = 9
+rating = 900
+par_minutes = 40
+files = ["ft_sort_int_tab.c"]
+allowed = []
+harness = "tests/harness.c"
+new_skills = []
+skills = ["loops", "conditions", "functions", "pointers"]
+
+[[cases]]
+name = "five numbers"
+args = ["5", "3", "1", "4", "2"]
+stdout = "1 2 3 4 5\n"
+
+[[cases]]
+name = "a single number"
+args = ["1"]
+stdout = "1\n"
+
+[[cases]]
+name = "duplicates"
+args = ["2", "2", "1"]
+stdout = "1 2 2\n"
+
+[[cases]]
+name = "already sorted"
+args = ["1", "2", "3"]
+stdout = "1 2 3\n"
+
+[[cases]]
+name = "negative numbers"
+args = ["-3", "7", "0", "-10", "5", "5"]
+stdout = "-10 -3 0 5 5 7\n"
+hidden = true
+hint = "negative numbers and duplicates"
+
+[[cases]]
+name = "empty array"
+stdout = "\n"
+hidden = true
+hint = "size 0: touch nothing"
+
+[[cases]]
+name = "reverse order"
+args = ["9", "8", "7", "6", "5", "4", "3", "2", "1", "0"]
+stdout = "0 1 2 3 4 5 6 7 8 9\n"
+hidden = true
+hint = "the worst case"

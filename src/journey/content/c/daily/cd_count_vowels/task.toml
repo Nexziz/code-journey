@@ -1,0 +1,62 @@
+title = "Count the vowels"
+language = "c"
+kind = "daily"
+level = 6
+order = 50
+rating = 800
+par_minutes = 25
+files = ["count_vowels.c"]
+allowed = ["write"]
+new_skills = []
+skills = ["loops", "conditions", "strings"]
+
+[[require]]
+pattern = "\\bargv\\b"
+message = "Reads argv"
+
+[[cases]]
+name = "hello"
+args = ["hello"]
+stdout = "2\n"
+
+[[cases]]
+name = "only vowels"
+args = ["AEIOU"]
+stdout = "5\n"
+
+[[cases]]
+name = "no vowels"
+args = ["rhythm"]
+stdout = "0\n"
+
+[[cases]]
+name = "empty string"
+args = [""]
+stdout = "0\n"
+
+[[cases]]
+name = "a pangram"
+args = ["The quick brown fox jumps over the lazy dog"]
+stdout = "11\n"
+hidden = true
+hint = "the answer has two digits: print it digit by digit"
+
+[[cases]]
+name = "a very long text"
+args = ["To be, or not to be, that is the question: To be, or not to be, that is the question: To be, or not to be, that is the question: To be, or not to be, that is the question: To be, or not to be, that is the question: To be, or not to be, that is the question: "]
+stdout = "78\n"
+hidden = true
+hint = "the answer has three digits"
+
+[[cases]]
+name = "two arguments"
+args = ["a", "b"]
+stdout = "0\n"
+hidden = true
+hint = "exactly one argument is expected"
+
+[[cases]]
+name = "no arguments"
+stdout = "0\n"
+hidden = true
+hint = "exactly one argument is expected"

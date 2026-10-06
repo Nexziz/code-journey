@@ -1,0 +1,53 @@
+title = "Compare two strings"
+language = "c"
+kind = "daily"
+level = 7
+order = 50
+rating = 850
+par_minutes = 25
+files = ["ft_strcmp.c"]
+allowed = []
+harness = "tests/harness.c"
+new_skills = []
+skills = ["loops", "functions", "strings", "pointers"]
+
+[[cases]]
+name = "equal"
+args = ["abc", "abc"]
+stdout = "0\n"
+
+[[cases]]
+name = "first is smaller"
+args = ["abc", "abd"]
+stdout = "-1\n"
+
+[[cases]]
+name = "first is larger"
+args = ["b", "a"]
+stdout = "1\n"
+
+[[cases]]
+name = "empty against a letter"
+args = ["", "a"]
+stdout = "-1\n"
+
+[[cases]]
+name = "one is a prefix"
+args = ["abc", "ab"]
+stdout = "1\n"
+hidden = true
+hint = "a longer string is larger when it starts with the shorter one"
+
+[[cases]]
+name = "both empty"
+args = ["", ""]
+stdout = "0\n"
+hidden = true
+hint = "two empty strings"
+
+[[cases]]
+name = "bytes above 127"
+args = ["é", "e"]
+stdout = "1\n"
+hidden = true
+hint = "chars are compared as unsigned values, so byte 0xC3 is larger than 'e'"

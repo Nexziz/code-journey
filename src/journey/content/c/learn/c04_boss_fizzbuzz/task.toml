@@ -1,0 +1,27 @@
+title = "Boss: Fizz Buzz"
+language = "c"
+kind = "boss"
+level = 4
+order = 9
+rating = 800
+par_minutes = 30
+files = ["fizzbuzz.c"]
+allowed = ["write"]
+new_skills = []
+skills = ["output", "variables", "loops", "conditions"]
+
+[[require]]
+pattern = "\\b(while|for)\\b"
+message = "Uses a loop"
+
+[[require]]
+pattern = "\\bif\\b"
+message = "Uses an if"
+
+[[require]]
+pattern = "%"
+message = "Uses % (remainder)"
+
+[[cases]]
+name = "plays to 15"
+stdout = "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz\n"

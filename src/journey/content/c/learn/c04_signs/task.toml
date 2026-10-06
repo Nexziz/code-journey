@@ -1,0 +1,27 @@
+title = "Negative, zero, positive"
+language = "c"
+kind = "learn"
+level = 4
+order = 1
+rating = 700
+par_minutes = 12
+files = ["signs.c"]
+allowed = ["write"]
+new_skills = ["conditions"]
+skills = ["output", "variables", "loops", "conditions"]
+
+[[require]]
+pattern = "\\b(while|for)\\b"
+message = "Uses a loop"
+
+[[require]]
+pattern = "\\bif\\b"
+message = "Uses an if"
+
+[[require]]
+pattern = "\\bint\\s+\\w+"
+message = "Declares an int variable"
+
+[[cases]]
+name = "classifies -3 to 3"
+stdout = "NNNZPPP\n"

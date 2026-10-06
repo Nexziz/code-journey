@@ -1,0 +1,40 @@
+title = "The next letter"
+language = "python"
+kind = "learn"
+level = 2
+order = 1
+rating = 650
+par_minutes = 10
+files = ["next_letter.py"]
+new_skills = ["variables"]
+skills = ["output", "variables"]
+
+[[require]]
+pattern = "\\bord\\s*\\("
+message = "Uses ord()"
+
+[[require]]
+pattern = "\\bchr\\s*\\("
+message = "Uses chr()"
+
+[[cases]]
+name = "f becomes k"
+stdin = "f\n"
+stdout = "k\n"
+
+[[cases]]
+name = "a becomes f"
+stdin = "a\n"
+stdout = "f\n"
+
+[[cases]]
+name = "u becomes z"
+stdin = "u\n"
+stdout = "z\n"
+
+[[cases]]
+name = "capitals too"
+stdin = "A\n"
+stdout = "F\n"
+hidden = true
+hint = "it works for capitals too"

@@ -1,0 +1,41 @@
+title = "The larger one"
+language = "c"
+kind = "learn"
+level = 5
+order = 3
+rating = 770
+par_minutes = 12
+files = ["ft_max.c"]
+allowed = []
+harness = "tests/harness.c"
+new_skills = ["functions"]
+skills = ["conditions", "functions"]
+
+[[cases]]
+name = "second is larger"
+args = ["3", "7"]
+stdout = "7\n"
+
+[[cases]]
+name = "first is larger"
+args = ["9", "2"]
+stdout = "9\n"
+
+[[cases]]
+name = "negatives"
+args = ["-4", "-9"]
+stdout = "-4\n"
+
+[[cases]]
+name = "equal values"
+args = ["5", "5"]
+stdout = "5\n"
+hidden = true
+hint = "what if they are equal?"
+
+[[cases]]
+name = "the extremes"
+args = ["-2147483648", "2147483647"]
+stdout = "2147483647\n"
+hidden = true
+hint = "the smallest and the largest int"

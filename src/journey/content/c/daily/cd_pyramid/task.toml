@@ -1,0 +1,53 @@
+title = "Build a pyramid"
+language = "c"
+kind = "daily"
+level = 6
+order = 50
+rating = 880
+par_minutes = 40
+files = ["pyramid.c"]
+allowed = ["write"]
+new_skills = []
+skills = ["loops", "conditions", "strings"]
+
+[[require]]
+pattern = "\\bargv\\b"
+message = "Reads argv"
+
+[[cases]]
+name = "one row"
+args = ["1"]
+stdout = "*\n"
+
+[[cases]]
+name = "three rows"
+args = ["3"]
+stdout = "  *\n ***\n*****\n"
+
+[[cases]]
+name = "five rows"
+args = ["5"]
+stdout = "    *\n   ***\n  *****\n *******\n*********\n"
+
+[[cases]]
+name = "zero rows"
+args = ["0"]
+stdout = ""
+
+[[cases]]
+name = "no argument"
+stdout = ""
+
+[[cases]]
+name = "twelve rows"
+args = ["12"]
+stdout = "           *\n          ***\n         *****\n        *******\n       *********\n      ***********\n     *************\n    ***************\n   *****************\n  *******************\n *********************\n***********************\n"
+hidden = true
+hint = "the number has two digits"
+
+[[cases]]
+name = "two arguments"
+args = ["3", "4"]
+stdout = ""
+hidden = true
+hint = "exactly one argument is expected"

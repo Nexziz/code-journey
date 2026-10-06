@@ -1,0 +1,23 @@
+title = "Boss: the staircase"
+language = "c"
+kind = "boss"
+level = 3
+order = 9
+rating = 740
+par_minutes = 20
+files = ["staircase.c"]
+allowed = ["write"]
+new_skills = []
+skills = ["output", "variables", "loops"]
+
+[[require]]
+pattern = "\\b(while|for)\\b[\\s\\S]*\\b(while|for)\\b"
+message = "Uses a loop inside a loop"
+
+[[forbid]]
+pattern = "abcd"
+message = "Does not type the letters by hand"
+
+[[cases]]
+name = "prints the staircase"
+stdout = "a\nab\nabc\nabcd\nabcde\n"

@@ -1,0 +1,58 @@
+title = "Boss: is it prime?"
+language = "python"
+kind = "boss"
+level = 5
+order = 9
+rating = 850
+par_minutes = 35
+timeout = 3
+files = ["is_prime.py"]
+harness = "tests/harness.py"
+new_skills = []
+skills = ["loops", "conditions", "functions"]
+
+[[cases]]
+name = "two"
+args = ["2"]
+stdout = "True\n"
+
+[[cases]]
+name = "one"
+args = ["1"]
+stdout = "False\n"
+
+[[cases]]
+name = "zero"
+args = ["0"]
+stdout = "False\n"
+
+[[cases]]
+name = "seventeen"
+args = ["17"]
+stdout = "True\n"
+
+[[cases]]
+name = "twenty-one"
+args = ["21"]
+stdout = "False\n"
+
+[[cases]]
+name = "negative"
+args = ["-7"]
+stdout = "False\n"
+hidden = true
+hint = "negative numbers are not prime"
+
+[[cases]]
+name = "a big prime"
+args = ["1000000007"]
+stdout = "True\n"
+hidden = true
+hint = "it must be fast: do you really need to try every divisor?"
+
+[[cases]]
+name = "a big square"
+args = ["999982000081"]
+stdout = "False\n"
+hidden = true
+hint = "999991 squared: the smallest divisor is large"

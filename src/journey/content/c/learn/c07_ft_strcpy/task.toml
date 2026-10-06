@@ -1,0 +1,34 @@
+title = "Copy a string"
+language = "c"
+kind = "learn"
+level = 7
+order = 3
+rating = 860
+par_minutes = 20
+files = ["ft_strcpy.c"]
+allowed = []
+harness = "tests/harness.c"
+new_skills = ["pointers"]
+skills = ["loops", "functions", "strings", "pointers"]
+
+[[cases]]
+name = "a word"
+args = ["hello"]
+stdout = "hello|1\n"
+
+[[cases]]
+name = "empty string"
+args = [""]
+stdout = "|1\n"
+
+[[cases]]
+name = "a sentence"
+args = ["copy me, please"]
+stdout = "copy me, please|1\n"
+
+[[cases]]
+name = "the end marker is copied"
+args = ["ab"]
+stdout = "ab|1\n"
+hidden = true
+hint = "did you copy the '\\0' too?"

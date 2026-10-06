@@ -1,0 +1,67 @@
+title = "Find a word"
+language = "c"
+kind = "daily"
+level = 7
+order = 50
+rating = 950
+par_minutes = 40
+files = ["ft_strstr.c"]
+allowed = []
+harness = "tests/harness.c"
+new_skills = []
+skills = ["loops", "functions", "strings", "pointers"]
+
+[[cases]]
+name = "a word in a sentence"
+args = ["hello world", "world"]
+stdout = "6\n"
+
+[[cases]]
+name = "not found"
+args = ["hello", "xyz"]
+stdout = "-1\n"
+
+[[cases]]
+name = "overlapping start"
+args = ["aaa", "aa"]
+stdout = "0\n"
+
+[[cases]]
+name = "at the very end"
+args = ["abcdef", "ef"]
+stdout = "4\n"
+
+[[cases]]
+name = "empty needle"
+args = ["abc", ""]
+stdout = "0\n"
+hidden = true
+hint = "an empty needle is found at the start"
+
+[[cases]]
+name = "empty haystack"
+args = ["", "a"]
+stdout = "-1\n"
+hidden = true
+hint = "nothing to search"
+
+[[cases]]
+name = "both empty"
+args = ["", ""]
+stdout = "0\n"
+hidden = true
+hint = "an empty needle is found even in an empty haystack"
+
+[[cases]]
+name = "a false start"
+args = ["mississippi", "issip"]
+stdout = "4\n"
+hidden = true
+hint = "a partial match that fails must not stop the search"
+
+[[cases]]
+name = "needle longer than haystack"
+args = ["ab", "abc"]
+stdout = "-1\n"
+hidden = true
+hint = "do not read past the end of the haystack"

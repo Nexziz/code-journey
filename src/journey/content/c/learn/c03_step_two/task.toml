@@ -1,0 +1,31 @@
+title = "Two at a time"
+language = "c"
+kind = "learn"
+level = 3
+order = 3
+rating = 690
+par_minutes = 12
+files = ["step_two.c"]
+allowed = ["write"]
+new_skills = ["loops"]
+skills = ["output", "variables", "loops"]
+
+[[require]]
+pattern = "\\b(while|for)\\b"
+message = "Uses a loop"
+
+[[require]]
+pattern = "\\bfor\\b"
+message = "Uses a for loop"
+
+[[require]]
+pattern = "\\bint\\s+\\w+"
+message = "Declares an int variable"
+
+[[forbid]]
+pattern = "02468"
+message = "Does not type the digits by hand"
+
+[[cases]]
+name = "prints the even digits"
+stdout = "02468\n"

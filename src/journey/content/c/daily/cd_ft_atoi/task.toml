@@ -1,0 +1,67 @@
+title = "Text to number"
+language = "c"
+kind = "daily"
+level = 6
+order = 50
+rating = 880
+par_minutes = 35
+files = ["ft_atoi.c"]
+allowed = []
+harness = "tests/harness.c"
+new_skills = []
+skills = ["loops", "conditions", "functions", "strings"]
+
+[[cases]]
+name = "a plain number"
+args = ["42"]
+stdout = "42\n"
+
+[[cases]]
+name = "sign and trailing text"
+args = ["  -17abc"]
+stdout = "-17\n"
+
+[[cases]]
+name = "plus sign"
+args = ["+8"]
+stdout = "8\n"
+
+[[cases]]
+name = "not a number"
+args = ["abc"]
+stdout = "0\n"
+
+[[cases]]
+name = "the smallest int"
+args = ["-2147483648"]
+stdout = "-2147483648\n"
+hidden = true
+hint = "-2147483648 does not fit once you negate it"
+
+[[cases]]
+name = "the largest int"
+args = ["2147483647"]
+stdout = "2147483647\n"
+hidden = true
+hint = "the largest int"
+
+[[cases]]
+name = "all kinds of whitespace"
+args = ["   \t\n\u000b\f\r 99 bottles"]
+stdout = "99\n"
+hidden = true
+hint = "space, \\t, \\n, \\v, \\f and \\r are all skipped"
+
+[[cases]]
+name = "two signs"
+args = ["--5"]
+stdout = "0\n"
+hidden = true
+hint = "only one sign is allowed: after it, a digit must follow"
+
+[[cases]]
+name = "empty string"
+args = [""]
+stdout = "0\n"
+hidden = true
+hint = "the empty string"

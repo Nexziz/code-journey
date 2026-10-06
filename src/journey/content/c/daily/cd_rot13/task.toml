@@ -1,0 +1,53 @@
+title = "Rot 13"
+language = "c"
+kind = "daily"
+level = 6
+order = 50
+rating = 820
+par_minutes = 25
+files = ["rot13.c"]
+allowed = ["write"]
+new_skills = []
+skills = ["loops", "conditions", "strings"]
+
+[[require]]
+pattern = "\\bargv\\b"
+message = "Reads argv"
+
+[[cases]]
+name = "a greeting"
+args = ["Hello, World!"]
+stdout = "Uryyb, Jbeyq!\n"
+
+[[cases]]
+name = "lowercase end of the alphabet"
+args = ["abcxyz"]
+stdout = "nopklm\n"
+
+[[cases]]
+name = "uppercase end of the alphabet"
+args = ["ABCXYZ"]
+stdout = "NOPKLM\n"
+
+[[cases]]
+name = "two arguments"
+args = ["a", "b"]
+stdout = "\n"
+
+[[cases]]
+name = "no arguments"
+stdout = "\n"
+
+[[cases]]
+name = "a sentence"
+args = ["Why did the chicken cross the road?"]
+stdout = "Jul qvq gur puvpxra pebff gur ebnq?\n"
+hidden = true
+hint = "a longer text with punctuation"
+
+[[cases]]
+name = "digits and symbols stay"
+args = ["13 is lucky: n->a"]
+stdout = "13 vf yhpxl: a->n\n"
+hidden = true
+hint = "only letters change"

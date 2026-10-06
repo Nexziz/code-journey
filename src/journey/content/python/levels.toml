@@ -1,0 +1,29 @@
+[[level]]
+number = 1
+title = "Say something"
+skill = "output"
+blurb = "A Python program runs from the top of the file. print() sends text to the terminal."
+
+[[level]]
+number = 2
+title = "Remember things"
+skill = "variables"
+blurb = "Variables name values. input() reads a line, int() turns it into a number, and + - * // % do the arithmetic."
+
+[[level]]
+number = 3
+title = "Again and again"
+skill = "loops"
+blurb = "for and range() repeat work, so you never copy-paste a line twenty times."
+
+[[level]]
+number = 4
+title = "Make decisions"
+skill = "conditions"
+blurb = "if / elif / else choose what happens. Comparisons and % drive the choices."
+
+[[level]]
+number = 5
+title = "Name your steps"
+skill = "functions"
+blurb = "def packages code into a named function you can call, reuse and test one by one."

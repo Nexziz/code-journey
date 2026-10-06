@@ -1,0 +1,26 @@
+title = "Loud vowels"
+language = "python"
+kind = "learn"
+level = 4
+order = 2
+rating = 730
+par_minutes = 15
+files = ["vowels.py"]
+new_skills = ["conditions"]
+skills = ["output", "variables", "loops", "conditions"]
+
+[[require]]
+pattern = "\\b(for|while)\\b"
+message = "Uses a loop"
+
+[[require]]
+pattern = "\\bif\\b"
+message = "Uses an if"
+
+[[forbid]]
+pattern = "AbcdE"
+message = "Does not type the result by hand"
+
+[[cases]]
+name = "capitalises the vowels"
+stdout = "AbcdEfghIjklmnOpqrstUvwxyz\n"

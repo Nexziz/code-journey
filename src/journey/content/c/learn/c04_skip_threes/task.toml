@@ -1,0 +1,27 @@
+title = "Skip the threes"
+language = "c"
+kind = "learn"
+level = 4
+order = 3
+rating = 740
+par_minutes = 15
+files = ["skip_threes.c"]
+allowed = ["write"]
+new_skills = ["conditions"]
+skills = ["output", "variables", "loops", "conditions"]
+
+[[require]]
+pattern = "\\b(while|for)\\b"
+message = "Uses a loop"
+
+[[require]]
+pattern = "\\bif\\b"
+message = "Uses an if"
+
+[[require]]
+pattern = "%"
+message = "Uses % (remainder)"
+
+[[cases]]
+name = "replaces multiples of 3"
+stdout = "12*45*78*\n"

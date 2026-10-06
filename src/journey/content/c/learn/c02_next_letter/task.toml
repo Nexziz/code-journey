@@ -1,0 +1,19 @@
+title = "The next letter"
+language = "c"
+kind = "learn"
+level = 2
+order = 1
+rating = 650
+par_minutes = 10
+files = ["next_letter.c"]
+allowed = ["write"]
+new_skills = ["variables"]
+skills = ["output", "variables"]
+
+[[require]]
+pattern = "\\bchar\\s+\\w+"
+message = "Declares a char variable"
+
+[[cases]]
+name = "prints the letter"
+stdout = "k\n"

@@ -1,0 +1,18 @@
+title = "Boss: the box"
+language = "python"
+kind = "boss"
+level = 1
+order = 9
+rating = 680
+par_minutes = 15
+files = ["box.py"]
+new_skills = []
+skills = ["output"]
+
+[[require]]
+pattern = "\\bprint\\s*\\("
+message = "Uses print()"
+
+[[cases]]
+name = "prints the box"
+stdout = "+---------+\n| journey |\n+---------+\n"

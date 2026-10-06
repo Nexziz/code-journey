@@ -1,0 +1,22 @@
+title = "Negative, zero, positive"
+language = "python"
+kind = "learn"
+level = 4
+order = 1
+rating = 700
+par_minutes = 12
+files = ["signs.py"]
+new_skills = ["conditions"]
+skills = ["output", "variables", "loops", "conditions"]
+
+[[require]]
+pattern = "\\b(for|while)\\b"
+message = "Uses a loop"
+
+[[require]]
+pattern = "\\bif\\b"
+message = "Uses an if"
+
+[[cases]]
+name = "classifies -3 to 3"
+stdout = "NNNZPPP\n"

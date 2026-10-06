@@ -1,0 +1,51 @@
+title = "The Collatz walk"
+language = "python"
+kind = "daily"
+level = 4
+order = 50
+rating = 780
+par_minutes = 25
+files = ["collatz.py"]
+new_skills = []
+skills = ["loops", "conditions"]
+
+[[cases]]
+name = "six"
+stdin = "6\n"
+stdout = "8\n"
+
+[[cases]]
+name = "already one"
+stdin = "1\n"
+stdout = "0\n"
+
+[[cases]]
+name = "seven"
+stdin = "7\n"
+stdout = "16\n"
+
+[[cases]]
+name = "twenty-seven"
+stdin = "27\n"
+stdout = "111\n"
+
+[[cases]]
+name = "two"
+stdin = "2\n"
+stdout = "1\n"
+hidden = true
+hint = "the smallest even number"
+
+[[cases]]
+name = "97"
+stdin = "97\n"
+stdout = "118\n"
+hidden = true
+hint = "a long walk"
+
+[[cases]]
+name = "837799"
+stdin = "837799\n"
+stdout = "524\n"
+hidden = true
+hint = "a very long walk: numbers get big"

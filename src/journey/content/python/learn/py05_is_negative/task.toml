@@ -1,0 +1,40 @@
+title = "Negative or not"
+language = "python"
+kind = "learn"
+level = 5
+order = 1
+rating = 740
+par_minutes = 12
+files = ["is_negative.py"]
+harness = "tests/harness.py"
+new_skills = ["functions"]
+skills = ["conditions", "functions"]
+
+[[cases]]
+name = "negative"
+args = ["-42"]
+stdout = "N\n"
+
+[[cases]]
+name = "positive"
+args = ["42"]
+stdout = "P\n"
+
+[[cases]]
+name = "zero counts as positive"
+args = ["0"]
+stdout = "P\n"
+
+[[cases]]
+name = "just below zero"
+args = ["-1"]
+stdout = "N\n"
+hidden = true
+hint = "the closest negative number"
+
+[[cases]]
+name = "a huge number"
+args = ["99999999999999999999"]
+stdout = "P\n"
+hidden = true
+hint = "Python integers have no limit"

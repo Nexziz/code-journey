@@ -1,0 +1,23 @@
+title = "Digits, backwards"
+language = "c"
+kind = "learn"
+level = 3
+order = 2
+rating = 670
+par_minutes = 10
+files = ["countdown_digits.c"]
+allowed = ["write"]
+new_skills = ["loops"]
+skills = ["output", "variables", "loops"]
+
+[[require]]
+pattern = "\\b(while|for)\\b"
+message = "Uses a loop"
+
+[[forbid]]
+pattern = "9876"
+message = "Does not type the digits by hand"
+
+[[cases]]
+name = "prints 9 down to 0"
+stdout = "9876543210\n"

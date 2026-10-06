@@ -1,0 +1,53 @@
+title = "Boss: print any number"
+language = "c"
+kind = "boss"
+level = 5
+order = 9
+rating = 850
+par_minutes = 35
+files = ["ft_putnbr.c"]
+allowed = ["write"]
+harness = "tests/harness.c"
+new_skills = []
+skills = ["output", "variables", "loops", "conditions", "functions"]
+
+[[cases]]
+name = "a small number"
+args = ["42"]
+stdout = "42\n"
+
+[[cases]]
+name = "a negative number"
+args = ["-7"]
+stdout = "-7\n"
+
+[[cases]]
+name = "zero"
+args = ["0"]
+stdout = "0\n"
+
+[[cases]]
+name = "a power of ten"
+args = ["1000"]
+stdout = "1000\n"
+
+[[cases]]
+name = "the largest int"
+args = ["2147483647"]
+stdout = "2147483647\n"
+hidden = true
+hint = "the largest int"
+
+[[cases]]
+name = "the smallest int"
+args = ["-2147483648"]
+stdout = "-2147483648\n"
+hidden = true
+hint = "the smallest int has no positive twin"
+
+[[cases]]
+name = "zeros in the middle"
+args = ["100203"]
+stdout = "100203\n"
+hidden = true
+hint = "zeros inside the number"

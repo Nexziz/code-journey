@@ -1,0 +1,41 @@
+title = "Negative or not"
+language = "c"
+kind = "learn"
+level = 5
+order = 2
+rating = 760
+par_minutes = 12
+files = ["ft_is_negative.c"]
+allowed = ["write"]
+harness = "tests/harness.c"
+new_skills = ["functions"]
+skills = ["output", "conditions", "functions"]
+
+[[cases]]
+name = "negative"
+args = ["-42"]
+stdout = "N\n"
+
+[[cases]]
+name = "positive"
+args = ["42"]
+stdout = "P\n"
+
+[[cases]]
+name = "zero counts as positive"
+args = ["0"]
+stdout = "P\n"
+
+[[cases]]
+name = "the extremes"
+args = ["-2147483648"]
+stdout = "N\n"
+hidden = true
+hint = "the smallest int"
+
+[[cases]]
+name = "the other extreme"
+args = ["2147483647"]
+stdout = "P\n"
+hidden = true
+hint = "the largest int"

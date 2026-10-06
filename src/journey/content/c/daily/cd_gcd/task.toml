@@ -1,0 +1,63 @@
+title = "Greatest common divisor"
+language = "c"
+kind = "daily"
+level = 6
+order = 50
+rating = 900
+par_minutes = 40
+files = ["gcd.c"]
+allowed = ["write"]
+new_skills = []
+skills = ["loops", "functions", "strings"]
+
+[[require]]
+pattern = "\\bargv\\b"
+message = "Reads argv"
+
+[[cases]]
+name = "twelve and eighteen"
+args = ["12", "18"]
+stdout = "6\n"
+
+[[cases]]
+name = "coprime numbers"
+args = ["7", "13"]
+stdout = "1\n"
+
+[[cases]]
+name = "a quarter"
+args = ["100", "75"]
+stdout = "25\n"
+
+[[cases]]
+name = "one argument"
+args = ["5"]
+stdout = "\n"
+
+[[cases]]
+name = "a classic"
+args = ["1071", "462"]
+stdout = "21\n"
+hidden = true
+hint = "a classic example"
+
+[[cases]]
+name = "zero"
+args = ["0", "5"]
+stdout = "5\n"
+hidden = true
+hint = "gcd(0, n) is n"
+
+[[cases]]
+name = "big and round"
+args = ["1000000", "250000"]
+stdout = "250000\n"
+hidden = true
+hint = "a multi-digit answer"
+
+[[cases]]
+name = "too many arguments"
+args = ["4", "6", "8"]
+stdout = "\n"
+hidden = true
+hint = "exactly two arguments are expected"

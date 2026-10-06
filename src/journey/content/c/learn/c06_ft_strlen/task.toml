@@ -1,0 +1,34 @@
+title = "Measure a string"
+language = "c"
+kind = "learn"
+level = 6
+order = 1
+rating = 780
+par_minutes = 12
+files = ["ft_strlen.c"]
+allowed = []
+harness = "tests/harness.c"
+new_skills = ["strings"]
+skills = ["variables", "loops", "functions", "strings"]
+
+[[cases]]
+name = "hello"
+args = ["hello"]
+stdout = "5\n"
+
+[[cases]]
+name = "empty string"
+args = [""]
+stdout = "0\n"
+
+[[cases]]
+name = "spaces count too"
+args = ["a b c"]
+stdout = "5\n"
+
+[[cases]]
+name = "a longer sentence"
+args = ["journey of a thousand miles"]
+stdout = "27\n"
+hidden = true
+hint = "a longer string"

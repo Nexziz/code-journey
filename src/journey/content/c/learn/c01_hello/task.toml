@@ -1,0 +1,19 @@
+title = "Hello, terminal"
+language = "c"
+kind = "learn"
+level = 1
+order = 1
+rating = 600
+par_minutes = 10
+files = ["hello.c"]
+allowed = ["write"]
+new_skills = ["output"]
+skills = ["output"]
+
+[[require]]
+pattern = "\\bwrite\\s*\\("
+message = "Uses write()"
+
+[[cases]]
+name = "prints the greeting"
+stdout = "Hello, World!\n"

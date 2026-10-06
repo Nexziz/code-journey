@@ -1,0 +1,18 @@
+title = "Ready, set, go"
+language = "python"
+kind = "learn"
+level = 1
+order = 2
+rating = 620
+par_minutes = 10
+files = ["countdown.py"]
+new_skills = ["output"]
+skills = ["output"]
+
+[[require]]
+pattern = "\\bprint\\s*\\("
+message = "Uses print()"
+
+[[cases]]
+name = "prints three lines"
+stdout = "Ready\nSet\nGo!\n"

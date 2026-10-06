@@ -1,0 +1,40 @@
+title = "Boss: digit by digit"
+language = "python"
+kind = "boss"
+level = 2
+order = 9
+rating = 720
+par_minutes = 20
+files = ["digits.py"]
+new_skills = []
+skills = ["output", "variables"]
+
+[[require]]
+pattern = "//"
+message = "Uses // (whole-number division)"
+
+[[require]]
+pattern = "%"
+message = "Uses % (remainder)"
+
+[[cases]]
+name = "1728"
+stdin = "1728\n"
+stdout = "1-7-2-8\n"
+
+[[cases]]
+name = "4096"
+stdin = "4096\n"
+stdout = "4-0-9-6\n"
+
+[[cases]]
+name = "1000"
+stdin = "1000\n"
+stdout = "1-0-0-0\n"
+
+[[cases]]
+name = "9999"
+stdin = "9999\n"
+stdout = "9-9-9-9\n"
+hidden = true
+hint = "the largest input"

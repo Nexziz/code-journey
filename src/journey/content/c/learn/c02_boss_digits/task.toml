@@ -1,0 +1,27 @@
+title = "Boss: digit by digit"
+language = "c"
+kind = "boss"
+level = 2
+order = 9
+rating = 720
+par_minutes = 20
+files = ["digits.c"]
+allowed = ["write"]
+new_skills = []
+skills = ["output", "variables"]
+
+[[require]]
+pattern = "\\bint\\s+\\w+"
+message = "Declares an int variable"
+
+[[require]]
+pattern = "\\w\\s*/\\s*\\w"
+message = "Uses / (division)"
+
+[[require]]
+pattern = "%"
+message = "Uses % (remainder)"
+
+[[cases]]
+name = "prints the number"
+stdout = "1728\n"

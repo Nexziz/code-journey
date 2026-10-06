@@ -1,0 +1,66 @@
+title = "Is it prime?"
+language = "c"
+kind = "daily"
+level = 5
+order = 50
+rating = 780
+par_minutes = 25
+timeout = 3
+files = ["ft_is_prime.c"]
+allowed = []
+harness = "tests/harness.c"
+new_skills = []
+skills = ["loops", "conditions", "functions"]
+
+[[cases]]
+name = "two"
+args = ["2"]
+stdout = "1\n"
+
+[[cases]]
+name = "one"
+args = ["1"]
+stdout = "0\n"
+
+[[cases]]
+name = "zero"
+args = ["0"]
+stdout = "0\n"
+
+[[cases]]
+name = "seventeen"
+args = ["17"]
+stdout = "1\n"
+
+[[cases]]
+name = "twenty-one"
+args = ["21"]
+stdout = "0\n"
+
+[[cases]]
+name = "negative"
+args = ["-7"]
+stdout = "0\n"
+hidden = true
+hint = "negative numbers are not prime"
+
+[[cases]]
+name = "an even giant"
+args = ["2147483646"]
+stdout = "0\n"
+hidden = true
+hint = "large even number"
+
+[[cases]]
+name = "a prime near a billion"
+args = ["999999937"]
+stdout = "1\n"
+hidden = true
+hint = "it must be fast: do you really need to try every divisor?"
+
+[[cases]]
+name = "the largest int"
+args = ["2147483647"]
+stdout = "1\n"
+hidden = true
+hint = "it must be fast, and i * i can overflow"

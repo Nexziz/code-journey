@@ -1,0 +1,23 @@
+title = "The whole alphabet"
+language = "c"
+kind = "learn"
+level = 3
+order = 1
+rating = 660
+par_minutes = 10
+files = ["alphabet.c"]
+allowed = ["write"]
+new_skills = ["loops"]
+skills = ["output", "variables", "loops"]
+
+[[require]]
+pattern = "\\b(while|for)\\b"
+message = "Uses a loop"
+
+[[forbid]]
+pattern = "abcdefg"
+message = "Does not type the alphabet by hand"
+
+[[cases]]
+name = "prints a to z"
+stdout = "abcdefghijklmnopqrstuvwxyz\n"

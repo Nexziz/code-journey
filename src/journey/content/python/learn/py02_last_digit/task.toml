@@ -1,0 +1,36 @@
+title = "The last digit"
+language = "python"
+kind = "learn"
+level = 2
+order = 2
+rating = 680
+par_minutes = 12
+files = ["last_digit.py"]
+new_skills = ["variables"]
+skills = ["output", "variables"]
+
+[[require]]
+pattern = "%"
+message = "Uses % (remainder)"
+
+[[cases]]
+name = "61"
+stdin = "61\n"
+stdout = "1\n"
+
+[[cases]]
+name = "a single digit"
+stdin = "7\n"
+stdout = "7\n"
+
+[[cases]]
+name = "ends in zero"
+stdin = "1000\n"
+stdout = "0\n"
+
+[[cases]]
+name = "a big number"
+stdin = "123456789\n"
+stdout = "9\n"
+hidden = true
+hint = "a big number"

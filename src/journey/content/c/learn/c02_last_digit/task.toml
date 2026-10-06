@@ -1,0 +1,23 @@
+title = "The last digit"
+language = "c"
+kind = "learn"
+level = 2
+order = 2
+rating = 680
+par_minutes = 12
+files = ["last_digit.c"]
+allowed = ["write"]
+new_skills = ["variables"]
+skills = ["output", "variables"]
+
+[[require]]
+pattern = "\\bint\\s+\\w+"
+message = "Declares an int variable"
+
+[[require]]
+pattern = "%"
+message = "Uses % (remainder)"
+
+[[cases]]
+name = "prints the digit"
+stdout = "1\n"
