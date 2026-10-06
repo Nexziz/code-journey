@@ -1,7 +1,5 @@
 # Rot 13
 
-Daily · uses levels 1 to 6
-
 ## Assignment
 
 Write a program that takes one string and prints it encoded with ROT13: every
@@ -13,12 +11,6 @@ printed unchanged. End with a newline.
     Uryyb, Jbeyq!
 
 If the program does not receive exactly one argument, it prints only a newline.
-
-## Things to think about
-
-There are 26 letters, so applying ROT13 twice gets the original text back. The
-`%` operator is the neat way to wrap around: think of a letter as a number from
-0 to 25.
 
 ## Turn in
 

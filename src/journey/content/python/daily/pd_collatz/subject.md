@@ -1,7 +1,5 @@
 # The Collatz walk
 
-Daily · uses levels 1 to 4
-
 ## Assignment
 
 Read a positive whole number `n`. Repeat until `n` is 1:
@@ -15,11 +13,6 @@ Print **how many steps** it took. Starting from 6 the walk is
     $ python3 collatz.py
     6
     8
-
-## Things to think about
-
-You do not know in advance how many steps there will be, so a `while` loop fits
-better than a `for`. Use `//` for the halving so the numbers stay whole.
 
 ## Turn in
 

@@ -1,7 +1,5 @@
 # Boss: is it prime?
 
-Level 5 · boss
-
 ## Assignment
 
 Write a function in `is_prime.py`:
@@ -11,13 +9,9 @@ Write a function in `is_prime.py`:
 It returns `True` if `n` is prime and `False` otherwise. A prime has exactly two
 divisors, 1 and itself, so 0, 1 and negative numbers are not prime.
 
-## What you need to know
-
-Everything so far, in one function. Think about speed: the tests include numbers
-around a billion, and a program that tries every divisor up to `n` would run for
-minutes. If `n` has a divisor, it has one that is at most its square root. Which
-loop condition expresses that without any outside function?
+Limit: numbers up to a few billion must be answered in well under a second.
 
 ## Turn in
 
 - Files: `is_prime.py`
+- Only the function: a test program imports it, so no `input()` or `print()` at the top level.

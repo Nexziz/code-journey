@@ -1,7 +1,5 @@
 # All the primes
 
-Daily · uses levels 1 to 5
-
 ## Assignment
 
 Write a function in `primes.py`:
@@ -13,18 +11,9 @@ increasing order. For `n` below 2 it returns an empty list.
 
     primes_up_to(10)    ->  [2, 3, 5, 7]
 
-## What you need to know
-
-A list holds several values in order: `numbers = [3, 1, 2]`. `numbers.append(5)`
-adds to the end, `numbers[0]` is the first element and `len(numbers)` counts them.
-The test prints how many primes you found and the last one.
-
-## Things to think about
-
-Testing each number with a loop of divisors works for small limits but is slow for
-big ones. The sieve of Eratosthenes is much faster: keep a list of `True` flags,
-one per number, and for each prime found, cross out all its multiples.
+Limit: `n` goes up to 300000; the answer must take at most a couple of seconds.
 
 ## Turn in
 
 - Files: `primes.py`
+- Only the function: a test program imports it, so no `input()` or `print()` at the top level.

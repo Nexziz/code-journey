@@ -1,7 +1,5 @@
 # Pascal's pyramid
 
-Daily · uses levels 1 to 1
-
 ## Assignment
 
 Pascal's triangle starts with a single `1`. Every other number is the sum of the
@@ -35,16 +33,6 @@ The first four rows look like this:
 
 Six more rows to go. Check them against the sum rule: every row reads the same
 forwards and backwards, and the last row is 40 characters wide.
-
-## Things to think about
-
-Work the numbers out on paper first, one row from the previous one. Rows 5, 6 and 7
-are where slips happen. Then count the spaces: Python can repeat text with `*`,
-so `" " * 9` is nine spaces, if you would rather not type them. Only `print` is
-needed: no `import`, so nothing does the sums for you.
-
-To see stray spaces at the end of your lines, run `python3 pascal.py | cat -A`
-(`cat -e` on a Mac): every line should end right after its last digit, with a `$`.
 
 ## Turn in
 

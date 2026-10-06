@@ -1,7 +1,5 @@
 # Boss: Fizz Buzz
 
-Level 4 · boss
-
 ## Assignment
 
 Go through the numbers 1 to 15, one per line:
@@ -18,14 +16,6 @@ The output starts like this:
     Fizz
     4
     Buzz
-
-## What you need to know
-
-Everything from levels 1 to 4. Two things to watch:
-
-- Test the "both" case first, or `15` will print `Fizz` and stop.
-- Numbers 10 to 15 have two digits. Split them with `/` and `%` like in the
-  level 2 boss.
 
 ## Turn in
 
