@@ -72,48 +72,25 @@ def render_outcome(outcome: Outcome) -> list[str]:
         return [
             "",
             ui.bad(" ✘ Not yet") + f"  (attempt {outcome.attempt_no})",
-            ui.dim("   Fix it, then git add / git commit / git push again."),
-            ui.dim("   `journey check` runs the public tests on your folder without pushing."),
+            ui.dim("   Fix it and push again. `journey check` tests it locally."),
         ]
 
     perf = outcome.performance
     assert perf is not None
-    lines = ["", f" {ui.ok('✔ PASSED')}  {ui.stars(perf.stars)}  {ui.bold(f'{perf.score:.2f}')}"]
-    timing = f"time {ui.clock(outcome.active_seconds)}"
-    if task.rated:
-        timing += f" (par {ui.clock(task.par_minutes * 60)})"
     failed = outcome.failed_attempts
-    first = "first try" if failed == 0 else f"{failed} failed {'try' if failed == 1 else 'tries'}"
-    lines.append(ui.dim(f"   {timing} · {first}"))
-    if task.rated:
-        parts = (
-            f"correct 0.60 · speed {0.20 * (perf.speed or 0):.2f} · "
-            f"first try {0.10 * perf.attempts:.2f} · style {0.10 * perf.style:.2f}"
-        )
-    else:
-        parts = (
-            f"correct 0.70 · first try {0.20 * perf.attempts:.2f} · style {0.10 * perf.style:.2f}"
-        )
-    lines.append(ui.dim(f"   score: {parts}"))
-
-    name = language_name(task.language)
+    detail = ui.clock(outcome.active_seconds)
+    if failed:
+        detail += f" · {failed} failed {'try' if failed == 1 else 'tries'}"
+    lines = ["", f" {ui.ok('✔ PASSED')}  {ui.stars(perf.stars)}  {ui.dim(detail)}"]
     if outcome.rating_after is not None and outcome.rating_before is not None:
         delta = outcome.rating_after - outcome.rating_before
-        shown = f"{delta:+.0f}"
-        painted = ui.ok(shown) if delta >= 0 else ui.bad(shown)
+        painted = ui.ok(f"{delta:+.0f}") if delta >= 0 else ui.bad(f"{delta:+.0f}")
         lines.append(
-            f"   {name} rating {outcome.rating_before:.0f} → {ui.bold(f'{outcome.rating_after:.0f}')}"
-            f" ({painted})" + ui.dim(f"   expected score was {outcome.expected:.2f}")
+            f"   {language_name(task.language)} {outcome.rating_before:.0f} → "
+            f"{ui.bold(f'{outcome.rating_after:.0f}')} ({painted})"
         )
     elif outcome.repeat:
-        lines.append(ui.dim("   practice run: your best stars are kept, your rating is unchanged"))
+        lines.append(ui.dim("   practice run: your rating is unchanged"))
     if outcome.level_up:
-        lines.append("")
-        lines.append(
-            ui.paint(
-                f" ★ Level {outcome.level_up.number} complete: {outcome.level_up.title}",
-                "bold",
-                "yellow",
-            )
-        )
+        lines.append(ui.paint(f" ★ Level {outcome.level_up.number} complete", "bold", "yellow"))
     return lines

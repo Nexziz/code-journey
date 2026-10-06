@@ -136,9 +136,18 @@ passed until a test needed the cell to wrap at 256.
 
 ## Subjects
 
-- Start with the title, `Level N · new skill: **x**` (or `Daily`, `Weekly`), then **Assignment**.
-- Explain the new idea only where it is introduced. Later tasks say what they reuse.
-- Show example output. Say what is *not* allowed and why.
-- End with **Turn in**: ``- Files: `name` `` and, for C, ``- Allowed functions: ...``. The content
-  tests check that every file and allowed function appears.
-- Write original tasks. Taking inspiration from the 42 style is welcome; copying its subjects is not.
+A subject is a question, the way an exam at 42 asks one. It has exactly two sections:
+
+- **Assignment**: what to build, precisely. Exact output format (newlines included), inputs and
+  their ranges, what happens on bad input, examples, and any limit the hidden tests enforce (for
+  example "any `int` must be answered in well under a second"). If a test can fail on it, the
+  question must say it.
+- **Turn in**: ``- Files: `name` `` and, for C, ``- Allowed functions: ...``. The content tests
+  check that every file and allowed function appears.
+
+Leave out everything else: no tutorials, no "what you need to know", no hints, no "things to think
+about", no level labels. A learner who needs a concept looks it up (`man 2 write`, the docs). The
+test is whether a learner who knows the language could build it from the question alone, without
+guessing at the format.
+
+Write original tasks. Taking inspiration from the 42 style is welcome; copying its subjects is not.

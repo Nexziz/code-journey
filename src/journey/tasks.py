@@ -9,7 +9,7 @@ A task is a directory:
         tests/        optional test harness, never copied to the workspace
         solution/     reference solution, used by `journey validate` and shown after you pass
 
-Levels (the Mario-style curriculum) are described by `<language>/levels.toml`.
+Levels are described by `<language>/levels.toml`.
 """
 
 from __future__ import annotations

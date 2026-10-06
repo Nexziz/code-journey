@@ -27,10 +27,8 @@ def unlocked_level(store: Store, catalog: Catalog, language: str) -> int:
 
 
 def is_unlocked(store: Store, catalog: Catalog, task: Task) -> bool:
-    done = completed_levels(store, catalog, task.language)
-    if task.kind in ("learn", "boss"):
-        return task.level <= done + 1
-    return task.level <= done  # dailies and weeklies only use skills you have already finished
+    """Lessons, dailies and weeklies are all open up to the level you are working on."""
+    return task.level <= completed_levels(store, catalog, task.language) + 1
 
 
 def next_curriculum_task(store: Store, catalog: Catalog, language: str) -> Task | None:
@@ -48,7 +46,7 @@ def nothing_unlocked(catalog: Catalog, kind: str, language: str) -> str:
     if not tasks:
         return f"There are no {kind} tasks for this track yet."
     lowest = min(t.level for t in tasks)
-    return f"{kind.capitalize()} tasks unlock when you finish level {lowest}."
+    return f"{kind.capitalize()} tasks unlock at level {lowest}."
 
 
 def practice_streak(store: Store, today: date) -> int:

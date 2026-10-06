@@ -86,41 +86,33 @@ class App:
 # -- journey init -----------------------------------------------------------------------
 
 
-def cmd_init(args: argparse.Namespace) -> None:
+def _setup(lang: str | None = None, workspace: str | None = None) -> Path:
+    """Create the state folder, the local remote, the grading hook and the workspace."""
     home = config.home()
     home.mkdir(parents=True, exist_ok=True)
     store = Store(config.db_path())
-    workspace = Path(args.workspace).expanduser() if args.workspace else None
-    if workspace is None:
-        workspace = Path(store.get_meta("workspace") or config.default_workspace())
-    store.set_meta("workspace", str(workspace.resolve()))
-    store.set_meta("language", args.lang or store.get_meta("language", "c") or "c")
-
     try:
+        folder = (
+            Path(workspace).expanduser()
+            if workspace
+            else Path(store.get_meta("workspace") or config.default_workspace())
+        )
+        store.set_meta("workspace", str(folder.resolve()))
+        store.set_meta("language", lang or store.get_meta("language", "c") or "c")
         remote = config.remote_path()
         gitops.ensure_remote(remote)
-        hook = gitops.install_hook(remote, home)
-        gitops.ensure_workspace(workspace, remote)
+        gitops.install_hook(remote, home)
+        gitops.ensure_workspace(folder, remote)
     except gitops.GitError as exc:
         raise Fail(str(exc)) from exc
+    finally:
+        store.close()
+    return folder
 
-    lang = store.get_meta("language")
-    say(ui.ok("✔ Journey is ready."))
-    say()
-    say(f"  Workspace   {pretty(workspace)}   {ui.dim('your code lives here; use any editor')}")
-    say(f"  Remote      {pretty(remote)}   {ui.dim('your local origin; it grades every push')}")
-    say(f"  Hook        {pretty(hook)}")
-    say(
-        f"  Track       {report.language_name(lang)}   {ui.dim('change it with: journey init --lang python')}"
-    )
-    say()
-    say(ui.bold("Your first steps"))
-    say("  journey start          begin the first task and start the stopwatch")
-    say("  journey check          try your solution locally (public tests, no score)")
-    say('  git add . && git commit -m "done" && git push    turn it in for grading')
-    say("  journey status         see your rating, streak and today's tasks")
-    say()
-    say(ui.dim("Check the setup any time with: journey doctor"))
+
+def cmd_init(args: argparse.Namespace) -> None:
+    folder = _setup(args.lang, args.workspace)
+    say(f"{ui.ok('✔ Ready.')} Your code goes in {pretty(folder)}. Run: journey")
 
 
 # -- journey start / subject / check ----------------------------------------------------
@@ -138,47 +130,90 @@ def _ensure_task_folder(app: App, task: Task) -> tuple[Path, bool]:
     return folder, created
 
 
+def _begin(app: App, task: Task, *, repeat: bool = False) -> None:
+    """Start (or resume) a task: set the clock going, make its folder, show the question."""
+    now = time.time()
+    app.store.settle_all(now)
+    app.store.begin(task.id, now, repeat)
+    app.store.set_meta("current", task.id)
+    folder, _ = _ensure_task_folder(app, task)
+
+    say()
+    say(report.render_subject(task))
+    say()
+    say(ui.rule())
+    say(f" cd {pretty(folder)}")
+    if task.provided_dir.is_dir():
+        provided = sorted(p.name for p in task.provided_dir.iterdir() if p.is_file())
+        say(ui.dim(f" provided, do not edit: {', '.join(provided)}"))
+    if repeat:
+        say(ui.dim(" practice run: your rating will not change"))
+    say(ui.dim(' test: journey check   ·   hand in: git add . && git commit -m "..." && git push'))
+
+
+def _continue_task(app: App) -> Task | None:
+    """Where you were in the lessons: the one in progress, else the next one."""
+    current = app.current()
+    if current and current.kind in ("learn", "boss"):
+        return current
+    for row in reversed(app.store.states()):
+        task = app.catalog.tasks.get(row["task_id"])
+        if task and task.kind in ("learn", "boss"):
+            return task
+    return curriculum.next_curriculum_task(app.store, app.catalog, app.language)
+
+
+def cmd_continue(args: argparse.Namespace) -> None:
+    app = App()
+    task = _continue_task(app)
+    if task is None:
+        say("You have finished every level. Try: journey daily")
+        return
+    _begin(app, task)
+
+
+def _start_pick(app: App, kind: str) -> None:
+    """Today's daily or this week's weekly."""
+    today = date.today()
+    task = curriculum.pick_task(app.store, app.catalog, kind, app.language, today)
+    if task is None:
+        say(curriculum.nothing_unlocked(app.catalog, kind, app.language))
+        return
+    if app.store.completed_since(task.id, _period_start(kind, today)):
+        stars = ui.stars(app.store.best_stars().get(task.id, 0))
+        when = "tomorrow" if kind == "daily" else "next week"
+        say(f"{kind.capitalize()} done {stars}  Come back {when}.")
+        return
+    _begin(app, task, repeat=task.id in app.store.passed_ids())
+
+
+def cmd_daily(args: argparse.Namespace) -> None:
+    _start_pick(App(), "daily")
+
+
+def cmd_weekly(args: argparse.Namespace) -> None:
+    _start_pick(App(), "weekly")
+
+
+def cmd_track(args: argparse.Namespace) -> None:
+    app = App()
+    if args.language:
+        app.store.set_meta("language", args.language)
+    say(f"Track: {report.language_name(args.language or app.language)}")
+    if not args.language:
+        say(ui.dim("Switch with: journey track c   or   journey track python"))
+
+
 def cmd_start(args: argparse.Namespace) -> None:
+    """Start any task by id (not shown in --help: the menu is the normal way in)."""
     app = App()
     task = app.target(args.task, args.lang)
     if not curriculum.is_unlocked(app.store, app.catalog, task):
         raise Fail(f"{task.id} is locked. `journey map` shows what you need to finish first.")
     passed = task.id in app.store.passed_ids()
-    repeat = passed
     if passed and not args.again and args.task not in ("daily", "weekly"):
         raise Fail(f"You already passed {task.id}. Use --again to practise it (rating unchanged).")
-
-    now = time.time()
-    app.store.settle_all(now)
-    resumed = app.store.state(task.id) is not None
-    app.store.begin(task.id, now, repeat)
-    app.store.set_meta("current", task.id)
-    folder, _ = _ensure_task_folder(app, task)
-
-    level = app.catalog.level(task.language, task.level)
-    where = f"Level {task.level}" + (f" · {level.title}" if level else "")
-    say(ui.rule(task.id))
-    say(ui.dim(f" {task.kind} · {where}"))
-    if task.rated:
-        say(ui.dim(f" difficulty {task.rating} · par time {task.par_minutes} min"))
-    if repeat:
-        say(ui.warn(" practice run: your rating will not change"))
-    say()
-    say(report.render_subject(task))
-    say()
-    say(ui.rule())
-    say(
-        f" {'Resumed' if resumed else 'Started'}: the stopwatch is running ({ui.dim('journey pause to stop it')})"
-    )
-    say(f" Folder:  cd {pretty(folder)}")
-    say(f" Files:   {', '.join(task.files)}")
-    if task.provided_dir.is_dir():
-        provided = sorted(p.name for p in task.provided_dir.iterdir() if p.is_file())
-        note = ui.dim("(do not edit: the grader uses its own copy)")
-        say(f" Provided: {', '.join(provided)}  {note}")
-    say(
-        ui.dim(' Try it: journey check   ·   Turn in: git add . && git commit -m "..." && git push')
-    )
+    _begin(app, task, repeat=passed)
 
 
 def cmd_subject(args: argparse.Namespace) -> None:
@@ -205,7 +240,6 @@ def cmd_check(args: argparse.Namespace) -> None:
         say(ui.bad(" ✘ Not passing yet."))
     if hidden:
         say(ui.dim(f" {hidden} hidden test(s) will also run when you push."))
-    say(ui.dim(" This was a local check: nothing was recorded."))
     if not result.passed:
         raise SystemExit(1)
 
@@ -252,29 +286,6 @@ def cmd_giveup(args: argparse.Namespace) -> None:
         )
     else:
         say(f"Put {task.id} aside. No penalty; start it again any time.")
-    if task.rated:
-        say(ui.dim(f"You can now read a model solution: journey solution {task.id}"))
-
-
-def cmd_solution(args: argparse.Namespace) -> None:
-    app = App()
-    if args.task:
-        task = app.target(args.task)
-    else:  # default to whatever you finished last
-        recent = app.store.recent_completions(1)
-        if not recent:
-            raise Fail("Nothing finished yet. Name a task: journey solution <id>")
-        task = app.catalog.tasks[recent[0]["task_id"]]
-    done = task.id in app.store.resolved_ids()
-    if not done:
-        raise Fail(
-            "Pass the task (or give it up) first; then you can compare with a model solution."
-        )
-    say(ui.rule(f"model solution · {task.id}"))
-    for name in task.files:
-        say(ui.bold(name))
-        say((task.solution_dir / name).read_text(encoding="utf-8"))
-    say(ui.dim("A model solution is one way to do it, not the only way."))
 
 
 # -- journey status / map / history / daily / weekly -------------------------------------
@@ -403,38 +414,6 @@ def cmd_history(args: argparse.Namespace) -> None:
         )
 
 
-def cmd_daily(args: argparse.Namespace) -> None:
-    _show_pick(args, "daily")
-
-
-def cmd_weekly(args: argparse.Namespace) -> None:
-    _show_pick(args, "weekly")
-
-
-def _show_pick(args: argparse.Namespace, kind: str) -> None:
-    app = App()
-    lang = args.lang or app.language
-    today = date.today()
-    task = curriculum.pick_task(app.store, app.catalog, kind, lang, today)
-    if task is None:
-        say(curriculum.nothing_unlocked(app.catalog, kind, lang))
-        return
-    say(
-        ui.rule(
-            f"{kind} · {today.isoformat() if kind == 'daily' else curriculum.period_key(kind, today)}"
-        )
-    )
-    say(f" {ui.bold(task.title)}  {ui.dim(task.id)}")
-    say(
-        ui.dim(
-            f" difficulty {task.rating} · about {task.par_minutes} min at par · "
-            f"{_task_status(app, task, _period_start(kind, today))}"
-        )
-    )
-    say()
-    say(f" Begin with: journey start {kind}")
-
-
 # -- journey validate / doctor ----------------------------------------------------------
 
 
@@ -536,6 +515,94 @@ def cmd_doctor(args: argparse.Namespace) -> None:
         raise SystemExit(1)
 
 
+# -- the menu --------------------------------------------------------------------------
+
+
+def _ask(prompt: str) -> str | None:
+    try:
+        return input(prompt).strip().lower()
+    except EOFError:
+        return None
+
+
+def _first_run() -> None:
+    say(ui.bold("journey"))
+    say(ui.dim(" Practise C or Python."))
+    say()
+    say("  1  C")
+    say("  2  Python")
+    answer = _ask(" > ")
+    _setup("python" if answer in ("2", "p", "py", "python") else "c")
+    say()
+
+
+def _unlock_level(catalog: Catalog, kind: str, language: str) -> int | None:
+    return min((t.level for t in catalog.of_kind(language, kind)), default=None)
+
+
+def _menu_rows(app: App, today: date) -> list[tuple[str, Task | None, str]]:
+    """(label, task, note) for the entries that start something."""
+    rows: list[tuple[str, Task | None, str]] = []
+    task = _continue_task(app)
+    if task is None:
+        rows.append(("Continue", None, ui.dim("all levels done")))
+    else:
+        rows.append(("Continue", task, ui.warn("in progress") if app.store.state(task.id) else ""))
+    for kind in ("daily", "weekly"):
+        label = kind.capitalize()
+        pick = curriculum.pick_task(app.store, app.catalog, kind, app.language, today)
+        if pick is None:
+            level = _unlock_level(app.catalog, kind, app.language)
+            rows.append((label, None, ui.dim(f"unlocks at level {level}" if level else "none yet")))
+        elif app.store.completed_since(pick.id, _period_start(kind, today)):
+            best = app.store.best_stars().get(pick.id, 0)
+            rows.append((label, pick, ui.ok("done ") + ui.stars(best)))
+        else:
+            busy = app.store.state(pick.id)
+            rows.append((label, pick, ui.warn("in progress") if busy else ui.dim("new")))
+    return rows
+
+
+def cmd_menu(args: argparse.Namespace) -> None:
+    if not config.db_path().exists():
+        _first_run()
+    app = App()
+    today = date.today()
+    lang = app.language
+    rating, _ = app.store.rating(lang)
+    streak = curriculum.practice_streak(app.store, today)
+    header = f"{report.language_name(lang)} · {rating:.0f}"
+    if streak:
+        header += f" · {streak} day{'s' if streak != 1 else ''} streak"
+    say()
+    say(f" {ui.bold('journey')}  {ui.dim(header)}")
+    say()
+    rows = _menu_rows(app, today)
+    for number, (label, task, note) in enumerate(rows, 1):
+        title = task.title if task else ""
+        say(f"  {number}  {label:<9} {title:<26} {note}".rstrip())
+    say(f"  4  {'Versus':<9} {'':<26} {ui.dim('coming soon')}")
+    say()
+
+    answer = _ask(" > ")
+    if answer is None:
+        return
+    keys = {"1": 0, "c": 0, "continue": 0, "2": 1, "d": 1, "daily": 1, "3": 2, "w": 2, "weekly": 2}
+    if answer == "":
+        answer = "1" if rows[0][1] else "2"
+    if answer in ("4", "v", "versus"):
+        say("Versus is coming soon.")
+        return
+    if answer not in keys:
+        say("Pick 1, 2 or 3.")
+        return
+    label, task, _ = rows[keys[answer]]
+    if label == "Continue":
+        cmd_continue(args)
+    else:
+        _start_pick(app, label.lower())
+
+
 # -- the git hook -----------------------------------------------------------------------
 
 
@@ -544,7 +611,7 @@ def _grade_push(app: App, rev: str) -> None:
     say(ui.rule("journey"))
     if task is None:
         say(ui.warn(" No task in progress, so nothing was graded."))
-        say(ui.dim(" Start one with `journey start`, then push again."))
+        say(ui.dim(" Run `journey`, pick a task, then push again."))
         return
     now = time.time()
     with tempfile.TemporaryDirectory(prefix="journey-push-") as tmp:
@@ -566,13 +633,8 @@ def _grade_push(app: App, rev: str) -> None:
     for line in report.render_outcome(outcome):
         say(line)
     if outcome.passed:
-        nxt = curriculum.next_curriculum_task(app.store, app.catalog, task.language)
         say()
-        say(
-            ui.dim(
-                f" Next: journey start{' ' + nxt.id if nxt else ' daily'}   ·   journey solution {task.id}"
-            )
-        )
+        say(ui.dim(" Next: journey"))
 
 
 def cmd_hook(args: argparse.Namespace) -> None:
@@ -600,53 +662,56 @@ def cmd_hook(args: argparse.Namespace) -> None:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="journey",
-        description="Practise C and Python with ratings, daily tasks and a growing curriculum.",
+        description="Practise C and Python. Run `journey` and pick a number.",
     )
     parser.add_argument("--version", action="version", version=f"journey {__version__}")
     sub = parser.add_subparsers(dest="command", metavar="<command>")
 
-    def add(name: str, func, help_text: str, *, lang: bool = False):
-        p = sub.add_parser(name, help=help_text, description=help_text)
+    def add(name: str, func, help_text: str, *, hidden: bool = False, lang: bool = False):
+        # A subcommand registered without `help=` still works but is not listed in --help.
+        extra = {} if hidden else {"help": help_text}
+        p = sub.add_parser(name, description=help_text, **extra)
         p.set_defaults(func=func)
         if lang:
-            p.add_argument(
-                "-l", "--lang", choices=LANGUAGES, help="language track (default: yours)"
-            )
+            p.add_argument("-l", "--lang", choices=LANGUAGES, help="language track")
         return p
 
-    p = add("init", cmd_init, "set up your workspace, local remote and grading hook")
-    p.add_argument("--workspace", help="where your code lives (default ~/journey-workspace)")
-    p.add_argument("--lang", choices=LANGUAGES, help="your main track")
+    # What a learner sees.
+    add("continue", cmd_continue, "carry on with the lessons")
+    add("daily", cmd_daily, "today's daily task")
+    add("weekly", cmd_weekly, "this week's task")
+    p = add("check", cmd_check, "test your work locally (nothing is recorded)")
+    p.add_argument("task", nargs="?")
+    p = add("track", cmd_track, "show or switch your language")
+    p.add_argument("language", nargs="?", choices=LANGUAGES)
 
-    add("status", cmd_status, "your rating, streak, current task and today's tasks", lang=True)
-    p = add("start", cmd_start, "start a task: next, daily, weekly, or an id", lang=True)
-    p.add_argument("task", nargs="?", help="task id, or next / daily / weekly (default: next)")
+    # Still there, but not needed to practise.
+    p = add("init", cmd_init, "set up the workspace and the grading hook", hidden=True)
+    p.add_argument("--workspace", help="where your code lives (default ~/journey-workspace)")
+    p.add_argument("--lang", choices=LANGUAGES, help="your language")
+    add("status", cmd_status, "rating, streak and tasks", hidden=True, lang=True)
+    p = add("start", cmd_start, "start a task by id", hidden=True, lang=True)
+    p.add_argument("task", nargs="?", help="task id, or next / daily / weekly")
     p.add_argument("--again", action="store_true", help="practise a task you already passed")
-    p = add("subject", cmd_subject, "show a task's subject again")
+    p = add("subject", cmd_subject, "show a task's question again", hidden=True)
     p.add_argument("task", nargs="?")
-    p = add("check", cmd_check, "run the public tests on your folder; nothing is recorded")
+    add("pause", cmd_pause, "stop the stopwatch", hidden=True)
+    p = add("resume", cmd_resume, "start the stopwatch again", hidden=True)
     p.add_argument("task", nargs="?")
-    add("pause", cmd_pause, "stop the stopwatch")
-    p = add("resume", cmd_resume, "start the stopwatch again")
-    p.add_argument("task", nargs="?")
-    p = add("giveup", cmd_giveup, "abandon a task (a loss for rated tasks)")
+    p = add("giveup", cmd_giveup, "abandon a task", hidden=True)
     p.add_argument("task", nargs="?")
     p.add_argument("-y", "--yes", action="store_true", help="do not ask for confirmation")
-    p = add("solution", cmd_solution, "read the model solution of a finished task")
-    p.add_argument("task", nargs="?")
-    p = add("map", cmd_map, "the levels, the skills they teach, and your stars", lang=True)
+    p = add("map", cmd_map, "all levels and your stars", hidden=True, lang=True)
     p.add_argument("--all", action="store_true", help="show every language")
-    p = add("history", cmd_history, "your recent results")
+    p = add("history", cmd_history, "recent results", hidden=True)
     p.add_argument("-n", "--limit", type=int, default=15)
-    add("daily", cmd_daily, "today's daily task", lang=True)
-    add("weekly", cmd_weekly, "this week's task", lang=True)
-    p = add("validate", cmd_validate, "check task packs: reference solutions must pass")
+    p = add("validate", cmd_validate, "check task packs", hidden=True)
     p.add_argument("tasks", nargs="*", help="task ids (default: all)")
     p.add_argument("--path", action="append", help="validate a task folder directly (repeatable)")
     p.add_argument(
         "-j", "--jobs", type=int, default=min(4, os.cpu_count() or 1), help="tasks graded at once"
     )
-    add("doctor", cmd_doctor, "check that everything journey needs is in place")
+    add("doctor", cmd_doctor, "check the setup", hidden=True)
     return parser
 
 
@@ -657,10 +722,8 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     parser = build_parser()
     args = parser.parse_args(argv)
-    if not getattr(args, "func", None):
-        args = parser.parse_args(["status"] if config.db_path().exists() else ["init"])
     try:
-        args.func(args)
+        (getattr(args, "func", None) or cmd_menu)(args)
     except Fail as exc:
         print(ui.bad(f"journey: {exc}"), file=sys.stderr)
         return 1

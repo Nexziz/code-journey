@@ -88,13 +88,13 @@ class CurriculumTests(ProgressCase):
         self.assertEqual(curriculum.completed_levels(s, c, "python"), 1)
         self.assertTrue(curriculum.is_unlocked(s, c, c.tasks["l2a"]))
 
-    def test_dailies_wait_for_their_levels(self):
+    def test_dailies_open_up_to_the_level_you_are_working_on(self):
         s, c = self.store, self.catalog
-        self.assertFalse(curriculum.is_unlocked(s, c, c.tasks["d_easy"]))
+        self.assertTrue(curriculum.is_unlocked(s, c, c.tasks["d_easy"]))  # level 1: open at once
+        self.assertFalse(curriculum.is_unlocked(s, c, c.tasks["d_hard"]))  # level 2: not yet
         self.finish("l1a")
         self.finish("l1boss")
-        self.assertTrue(curriculum.is_unlocked(s, c, c.tasks["d_easy"]))
-        self.assertFalse(curriculum.is_unlocked(s, c, c.tasks["d_hard"]))  # needs level 2 done
+        self.assertTrue(curriculum.is_unlocked(s, c, c.tasks["d_hard"]))  # now working on level 2
 
     def test_finishing_everything_returns_no_next_task(self):
         for task_id in ("l1a", "l1boss", "l2a"):
@@ -109,7 +109,12 @@ class PickTests(ProgressCase):
         self.finish("l1a")
         self.finish("l1boss")
 
-    def test_nothing_to_pick_before_level_one_is_done(self):
+    def test_a_daily_is_available_from_the_start(self):
+        task = curriculum.pick_task(self.store, self.catalog, "daily", "python", self.today)
+        self.assertEqual(task.id, "d_easy")  # level 1 and closest to the starting rating
+
+    def test_nothing_to_pick_when_every_daily_is_above_your_level(self):
+        del self.catalog.tasks["d_easy"], self.catalog.tasks["d_mid"]  # only level 2 is left
         self.assertIsNone(
             curriculum.pick_task(self.store, self.catalog, "daily", "python", self.today)
         )
@@ -140,10 +145,10 @@ class PickTests(ProgressCase):
 
     def test_reruns_when_the_pool_is_dry(self):
         self.unlock()
-        self.finish("d_easy")
-        self.finish("d_mid")
+        for task_id in ("d_easy", "d_mid", "d_hard"):
+            self.finish(task_id)
         task = curriculum.pick_task(self.store, self.catalog, "daily", "python", self.today)
-        self.assertIn(task.id, ("d_easy", "d_mid"))
+        self.assertIn(task.id, ("d_easy", "d_mid", "d_hard"))
 
     def test_weekly_pick_is_per_week(self):
         self.unlock()

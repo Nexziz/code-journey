@@ -40,6 +40,17 @@ class CurriculumShapeTests(unittest.TestCase):
             for name in task.files:
                 self.assertIn(f"`{name}`", subject, f"{task.id}: subject never mentions {name}")
 
+    def test_subjects_are_questions_not_lessons(self):
+        """A subject is a precise spec: Assignment and Turn in, no tutorials and no hints."""
+        for task in CATALOG.tasks.values():
+            subject = task.subject_path.read_text(encoding="utf-8")
+            headings = [line for line in subject.splitlines() if line.startswith("## ")]
+            self.assertEqual(headings, ["## Assignment", "## Turn in"], task.id)
+            self.assertFalse(
+                [line for line in subject.splitlines() if line.startswith(("Level ", "Daily ·"))],
+                f"{task.id}: level labels do not belong in a question",
+            )
+
     def test_c_subjects_list_the_allowed_functions(self):
         for task in CATALOG.tasks.values():
             if task.language != "c":

@@ -87,8 +87,8 @@ class EndToEndTests(IsolatedHome):
         self.assertIn("py01_hello", self.journey("history").stdout)
         self.assertIn("Streak   1 day", self.journey("status").stdout)
 
-        # Finished tasks can be read afterwards, and cannot be replayed by accident.
-        self.assertIn("print", self.journey("solution", "py01_hello").stdout)
+        # Solutions are never shown, and finished tasks cannot be replayed by accident.
+        self.assertNotEqual(self.journey("solution", "py01_hello").returncode, 0)
         again = self.journey("start", "py01_hello")
         self.assertEqual(again.returncode, 1)
         self.assertIn("--again", again.stderr)
